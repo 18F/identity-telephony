@@ -1,7 +1,7 @@
 module Telephony
   class Configuration
-    attr_accessor :adpater,
-                  :twilio_timeout,
+    attr_writer   :adapter
+    attr_accessor :twilio_timeout,
                   :twilio_numbers,
                   :twilio_sid,
                   :twilio_auth_token,
@@ -12,12 +12,12 @@ module Telephony
                   :twilio_voice_callback_base_url
 
     def initialize
-      self.adapter ||= :twilio
+      @adapter ||= :twilio
       self.twilio_timeout ||= 5
       self.twilio_record_voice ||= false
     end
 
-    def adpater
+    def adapter
       @adapter.to_sym
     end
   end

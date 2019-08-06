@@ -26,6 +26,7 @@ module Telephony
     private
 
     def should_use_twilio_verify?
+      return false unless Telephony.config.adapter == :twilio
       return false unless channel == :sms
       destination_country = Phonelib.parse(recipient_phone).country
       !%w[US CA MX].include?(destination_country)
