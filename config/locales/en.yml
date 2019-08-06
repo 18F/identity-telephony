@@ -1,0 +1,14 @@
+en:
+  authentication_otp:
+    sms: "%{code} is your login.gov security code. Use this to continue signing
+        in to your account. This code will expire in %{expiration} minutes."
+    voice: Hello! Your login.gov one time passcode is, %{code}, again, your passcode
+        is, %{code}. This code expires in %{expiration} minutes.
+  confirmation_otp:
+    sms: "%{code} is your login.gov confirmation code. Use this to confirm
+        your phone number. This code will expire in %{expiration} minutes."
+    voice: Hello! Your login.gov one time passcode is, %{code}, again, your passcode
+        is, %{code}. This code expires in %{expiration} minutes.
+  twilio:
+    programmable_voice:
+      repeat_message: Press 1 to repeat this message.

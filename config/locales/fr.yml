@@ -1,0 +1,18 @@
+fr:
+  authentication_otp:
+    sms: "%{code} est votre code de sécurité login.gov. Utilisez-le pour
+        continuer à vous connecter à votre compte. Ce code expirera dans %{expiration}
+        minutes."
+    voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est,
+        %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera
+        dans %{expiration} minutes.
+  confirmation_otp:
+    sms: "%{code} est votre code de confirmation login.gov. Utilisez-le
+        pour confirmer votre numéro de téléphone. Ce code expirera dans %{expiration}
+        minutes."
+    voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est,
+        %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera
+        dans %{expiration} minutes.
+  twilio:
+    programmable_voice:
+      repeat_message: Appuyez sur 1 pour répéter votre code.
