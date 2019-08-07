@@ -33,10 +33,15 @@ module Telephony
     end
 
     def adapter
-      if channel == :sms
+      case [Telephony.config.adapter, channel.to_sym]
+      when [:twilio, :sms]
         Twilio::ProgrammableSmsSender.new
-      else
+      when [:twilio, :voice]
         Twilio::ProgrammableVoiceSender.new
+      when [:test, :sms]
+        Test::SmsSender.new
+      when [:test, :voice]
+        Test::VoiceSender.new
       end
     end
 
