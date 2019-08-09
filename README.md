@@ -41,7 +41,7 @@ class TwilioVoiceController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def show
-    xml = Telephony::Twilio::ProgrammableVoiceMessage.from_callback(request.original_url)
+    xml = Telephony::Twilio::ProgrammableVoiceMessage.from_callback(request.original_url).twiml
     render xml: xml
   end
 end
