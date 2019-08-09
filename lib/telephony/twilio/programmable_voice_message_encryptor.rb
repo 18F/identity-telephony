@@ -12,7 +12,7 @@ module Telephony
             data: encode(encrypted_data),
             iv: encode(iv),
             tag: encode(tag),
-          }.to_json(args)
+          }.to_json(*args)
         end
 
         def encode(bytes)
