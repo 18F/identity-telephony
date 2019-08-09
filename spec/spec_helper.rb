@@ -1,6 +1,6 @@
 require 'pry-byebug'
 require 'webmock/rspec'
-require 'telephony'
+require 'identity-telephony'
 
 Dir[File.dirname(__FILE__) + '/support/*.rb'].sort.each { |file| require file }
 
