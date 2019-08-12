@@ -20,6 +20,21 @@ Telephony.config do |c|
 end
 ```
 
+# Error handling
+
+If the gem encounters a problem it will raise an instance of `Telephony::TelephonyError`.
+This object can be used to render an error to the user like so:
+
+```ruby
+
+def create
+  Telephony.end_authentication_otp(to: to, otp: otp, expiration: expiration, channel: :sms)
+rescue Telephony::TelephonyError => err
+  flash[:error] = error.friendly_message
+  render :new
+end
+```
+
 # Twilio Adapter
 
 When the Twilio adapter is in use, the gem will use Twilio to send voice calls an SMSs.

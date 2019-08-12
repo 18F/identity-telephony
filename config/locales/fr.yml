@@ -13,6 +13,21 @@ fr:
     voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est,
         %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera
         dans %{expiration} minutes.
+  telephony_error:
+    friendly_message:
+      api_connection: Le serveur a mis trop de temps à répondre. Veuillez réessayer.
+        Le service de messagerie texte peut avoir des problèmes. Vous pouvez vérifier
+        le statut avec <a href="https://status.twilio.com/" target='_blank'>notre
+        fournisseur de service de messages</a>.
+      generic: Échec de l'envoi de votre code de sécurité.
+      invalid_calling_area: Les appels vers ce numéro de téléphone ne sont pas pris
+        en charge. Veuillez essayer par SMS si vous possédez un téléphone disposant
+        de cette fonction.
+      invalid_phone_number: Le numéro de téléphone saisi n'est pas valide.
+      sms_unsupported: Le numéro de téléphone saisi ne prend pas en charge les
+        messages textuels. Veuillez essayer l'option d'appel téléphonique.
+      voice_unsupported: Numéro de téléphone invalide. Vérifiez que vous avez entré
+        le bon indicatif international ou régional.
   twilio:
     programmable_voice:
       repeat_message: Appuyez sur 1 pour répéter votre code.

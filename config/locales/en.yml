@@ -9,6 +9,20 @@ en:
         your phone number. This code will expire in %{expiration} minutes."
     voice: Hello! Your login.gov one time passcode is, %{code}, again, your passcode
         is, %{code}. This code expires in %{expiration} minutes.
+  telephony_error:
+    friendly_message:
+      api_connection: The server took too long to respond. Please try again.<br><br>The
+        text messaging service may be having trouble. You can check the status with
+        <a href="https://status.twilio.com/" target='_blank'>our messaging service
+        provider</a>.
+      generic: Your security code failed to send.
+      invalid_calling_area: Calls to that phone number are not supported. Please try
+        SMS if you have an SMS-capable phone.
+      invalid_phone_number: The phone number entered is not valid.
+      sms_unsupported: The phone number entered doesn't support text messaging.
+        Try the Phone call option.
+      voice_unsupported: Invalid phone number. Check that you've entered the correct
+        country code or area code.
   twilio:
     programmable_voice:
       repeat_message: Press 1 to repeat this message.

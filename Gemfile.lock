@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    identity-telephony (0.0.2)
+    identity-telephony (0.0.3)
       i18n
       phonelib
       twilio-ruby
