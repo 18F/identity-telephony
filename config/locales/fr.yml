@@ -1,18 +1,37 @@
+---
 fr:
+  account_reset_cancellation_notice: Votre demande de suppression de votre compte
+    login.gov a été annulée.
+  account_reset_notice: 'Vous avez demandé à supprimer votre compte login.gov. Votre
+    demande sera être traité en 24 heures. Si vous ne souhaitez pas supprimer votre
+    compte, veuillez cancel: %{cancel_link}'
   authentication_otp:
-    sms: "%{code} est votre code de sécurité login.gov. Utilisez-le pour
-        continuer à vous connecter à votre compte. Ce code expirera dans %{expiration}
-        minutes."
+    sms: "%{code} est votre code de sécurité login.gov. Utilisez-le pour continuer
+      à vous connecter à votre compte. Ce code expirera dans %{expiration} minutes."
     voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est,
-        %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera
-        dans %{expiration} minutes.
+      %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera dans
+      %{expiration} minutes.
   confirmation_otp:
-    sms: "%{code} est votre code de confirmation login.gov. Utilisez-le
-        pour confirmer votre numéro de téléphone. Ce code expirera dans %{expiration}
-        minutes."
+    sms: "%{code} est votre code de confirmation login.gov. Utilisez-le pour confirmer
+      votre numéro de téléphone. Ce code expirera dans %{expiration} minutes."
     voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est,
-        %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera
-        dans %{expiration} minutes.
+      %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera dans
+      %{expiration} minutes.
+  doc_auth_link: 'Vous avez demandé à vérifier votre identité sur un téléphone mobile.
+    S''il vous plaît prendre une photo de votre identité émise par l''état: %{link}'
+  help_keyword_response: Obtenez de l'aide à l'adresse www.login.gov/help ou contactez-nous
+    à l'adresse www.login.gov/contact.
+  join_keyword_response: 123456 est votre code de confirmation login.gov. Utilisez-le
+    pour confirmer votre numéro de téléphone. Ce code expirera dans 5 minutes.
+  personal_key_regeneration_notice: Une nouvelle clé personnelle a été émise pour
+    votre compte login.gov. Si vous ne l'avez pas demandée, réinitialisez votre mot
+    de passe.
+  personal_key_sign_in_notice: Votre clé personnelle a été utilisée pour vous connecter
+    à votre compte login.gov. Si ce n’était pas vous, changez votre mot de passe.
+  stop_keyword_response: Vous avez désabonné des alertes de login.gov. Vous ne recevrez
+    plus d'alertes sauf si vous vous réabonnez en utilisant ce numéro de téléphone
+    pour vous connecter ou créer un compte. Répondez à HELP pour obtenir de l'aide
+    ou visitez www.login.gov/help.
   telephony_error:
     friendly_message:
       api_connection: Le serveur a mis trop de temps à répondre. Veuillez réessayer.
@@ -24,8 +43,8 @@ fr:
         en charge. Veuillez essayer par SMS si vous possédez un téléphone disposant
         de cette fonction.
       invalid_phone_number: Le numéro de téléphone saisi n'est pas valide.
-      sms_unsupported: Le numéro de téléphone saisi ne prend pas en charge les
-        messages textuels. Veuillez essayer l'option d'appel téléphonique.
+      sms_unsupported: Le numéro de téléphone saisi ne prend pas en charge les messages
+        textuels. Veuillez essayer l'option d'appel téléphonique.
       voice_unsupported: Numéro de téléphone invalide. Vérifiez que vous avez entré
         le bon indicatif international ou régional.
   twilio:
