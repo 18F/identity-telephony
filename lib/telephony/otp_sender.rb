@@ -38,6 +38,10 @@ module Telephony
         Twilio::ProgrammableSmsSender.new
       when [:twilio, :voice]
         Twilio::ProgrammableVoiceSender.new
+      when [:pinpoint, :sms]
+        Pinpoint::ProgrammableSmsSender.new
+      when [:pinpoint, :voice]
+        Pinpoint::ProgrammableVoiceSender.new
       when [:test, :sms]
         Test::SmsSender.new
       when [:test, :voice]

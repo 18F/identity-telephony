@@ -40,4 +40,46 @@ module Telephony
       'telephony_error.friendly_message.sms_unsupported'
     end
   end
+
+  class DuplicateEndpointError < TelephonyError
+    def friendly_error_message_key
+      'telephony_error.friendly_message.duplicate_endpoint'
+    end
+  end
+
+  class OptOutError < TelephonyError
+    def friendly_error_message_key
+      'telephony_error.friendly_message.opt_out'
+    end
+  end
+
+  class PermanentFailureError < TelephonyError
+    def friendly_error_message_key
+      'telephony_error.friendly_message.permanent_failure'
+    end
+  end
+
+  class TemporaryFailureError < TelephonyError
+    def friendly_error_message_key
+      'telephony_error.friendly_message.temporary_failure'
+    end
+  end
+
+  class ThrottledError < TelephonyError
+    def friendly_error_message_key
+      'telephony_error.friendly_message.throttled'
+    end
+  end
+
+  class TimeoutError < TelephonyError
+    def friendly_error_message_key
+      'telephony_error.friendly_message.timeout'
+    end
+  end
+
+  class UnknownFailureError < TelephonyError
+    def friendly_error_message_key
+      'telephony_error.friendly_message.unknown_failure'
+    end
+  end
 end

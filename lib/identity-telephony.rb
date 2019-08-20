@@ -13,6 +13,9 @@ require 'telephony/twilio/programmable_voice_message_encryptor'
 require 'telephony/twilio/programmable_voice_sender'
 require 'telephony/twilio/programmable_voice_twiml_builder'
 require 'telephony/twilio/verify_client'
+require 'telephony/pinpoint/programmable_sms_sender'
+require 'telephony/pinpoint/programmable_voice_sender'
+require 'aws-sdk-pinpoint'
 
 I18n.load_path += Dir[File.dirname(__FILE__) + '/../config/locales/*.yml']
 

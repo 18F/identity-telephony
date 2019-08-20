@@ -13,6 +13,11 @@ Telephony.config do |c|
   c.twilio_verify_api_key = 'fake-twilio-verify-api-key'
   c.twilio_voice_callback_encryption_key = Base64.strict_encode64('0' * 32)
   c.twilio_voice_callback_base_url = 'https://example.com/api/voice'
+
+  c.pinpoint_region = 'fake-pinpoint-region'
+  c.pinpoint_access_key_id = 'fake-pinpoint-access-key-id'
+  c.pinpoint_secret_access_key = 'fake-pinpoint-secret-access-key'
+  c.pinpoint_application_id = 'fake-pinpoint-application-id'
 end
 
 RSpec.configure do |config|
