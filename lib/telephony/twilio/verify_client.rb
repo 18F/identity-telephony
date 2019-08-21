@@ -19,6 +19,7 @@ module Telephony
 
       def send_verify_request
         return response if response.success?
+
         raise_bad_request_error
       rescue Faraday::TimeoutError, Faraday::ConnectionFailed => err
         raise_connection_timed_out_or_failed_error(err)

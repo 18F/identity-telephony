@@ -15,6 +15,7 @@ module Telephony
         def last_otp(phone: nil)
           messages.reverse.find do |messages|
             next false unless phone.nil? || messages.to == phone
+
             true unless messages.otp.nil?
           end&.otp
         end

@@ -13,6 +13,7 @@ module Telephony
         status_code = response.status_code
         delivery_status = response.delivery_status
         return true if delivery_status == 'SUCCESSFUL'
+
         exception_message = "Pinpoint Error: #{delivery_status} - #{status_code}"
 
         error_hash = {
@@ -26,6 +27,7 @@ module Telephony
         }
         exc = error_hash[response]
         raise exc, exception_message if exc
+
         raise TelephonyError, exception_message
       end
     end

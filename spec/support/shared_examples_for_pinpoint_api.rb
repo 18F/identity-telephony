@@ -50,7 +50,7 @@ shared_examples 'a pinpoint api client' do
         expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
           Telephony::PermanentFailureError,
           raised_error_message,
-                                                                            )
+        )
       end
     end
 

@@ -35,6 +35,7 @@ module Telephony
           if base64.nil?
             raise EncryptionError, 'Unable to base64 decode nil'
           end
+
           Base64.strict_decode64(base64)
         rescue ArgumentError
           raise EncryptionError, 'The ciphertext contains invalid base64'

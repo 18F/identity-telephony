@@ -23,7 +23,6 @@ describe Telephony::Twilio::ProgrammableVoiceMessageEncryptor do
     end
 
     it 'should raise an encryption error for invalid JSON' do
-
       expect { described_class.decrypt('this is "" invalid JSON') }.to raise_error(
         Telephony::Twilio::ProgrammableVoiceMessageEncryptor::EncryptionError,
         'Failed to parse ciphertext JSON',
