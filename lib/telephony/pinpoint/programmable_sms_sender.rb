@@ -25,7 +25,8 @@ module Telephony
                       },
                   },
               },
-          })
+          }
+        )
         raise_if_error(response.message_response.result[to])
       end
     end

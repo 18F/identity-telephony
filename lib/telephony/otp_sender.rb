@@ -13,6 +13,7 @@ module Telephony
       if should_use_twilio_verify?
         return Twilio::VerifyClient.new.send(otp: otp, to: recipient_phone)
       end
+
       adapter.send(message: authentication_message, to: recipient_phone)
     end
 
@@ -20,6 +21,7 @@ module Telephony
       if should_use_twilio_verify?
         return Twilio::VerifyClient.new.send(otp: otp, to: recipient_phone)
       end
+
       adapter.send(message: confirmation_message, to: recipient_phone)
     end
 
@@ -28,6 +30,7 @@ module Telephony
     def should_use_twilio_verify?
       return false unless Telephony.config.adapter == :twilio
       return false unless channel == :sms
+
       destination_country = Phonelib.parse(recipient_phone).country
       !%w[US CA MX].include?(destination_country)
     end
@@ -67,6 +70,7 @@ module Telephony
 
     def otp_transformed_for_channel
       return otp if channel != :voice
+
       otp.scan(/\d/).join(', ')
     end
   end

@@ -14,6 +14,7 @@ module Telephony
         if encrypted_message.nil?
           raise CallbackUrlError, 'The url is missing an encrypted message param'
         end
+
         from_encrypted_message(encrypted_message)
       rescue ProgrammableVoiceMessageEncryptor::EncryptionError => e
         raise CallbackUrlError, "Unable to decrypt the message. #{e.message}"
@@ -33,6 +34,7 @@ module Telephony
 
       def repeat_url
         return unless repeat_count > 0
+
         self.class.new(
           message: message,
           repeat_count: repeat_count - 1,
