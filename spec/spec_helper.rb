@@ -1,3 +1,4 @@
+require 'i18n/tasks'
 require 'pry-byebug'
 require 'webmock/rspec'
 require 'identity-telephony'

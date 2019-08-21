@@ -51,7 +51,7 @@ module Telephony
 
     def authentication_message
       I18n.t(
-        "authentication_otp.#{channel}",
+        "telephony.authentication_otp.#{channel}",
         code: otp_transformed_for_channel,
         expiration: expiration,
       )
@@ -59,7 +59,7 @@ module Telephony
 
     def confirmation_message
       I18n.t(
-        "confirmation_otp.#{channel}",
+        "telephony.confirmation_otp.#{channel}",
         code: otp_transformed_for_channel,
         expiration: expiration,
       )

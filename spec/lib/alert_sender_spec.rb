@@ -14,7 +14,7 @@ describe Telephony::AlertSender do
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
       expect(last_message.body).to eq(
-        I18n.t('account_reset_notice', cancel_link: 'example.com')
+        I18n.t('telephony.account_reset_notice', cancel_link: 'example.com')
       )
     end
   end
@@ -25,7 +25,7 @@ describe Telephony::AlertSender do
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
-      expect(last_message.body).to eq(I18n.t('account_reset_cancellation_notice'))
+      expect(last_message.body).to eq(I18n.t('telephony.account_reset_cancellation_notice'))
     end
   end
 
@@ -35,7 +35,7 @@ describe Telephony::AlertSender do
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
-      expect(last_message.body).to eq(I18n.t('doc_auth_link', link: 'example.com'))
+      expect(last_message.body).to eq(I18n.t('telephony.doc_auth_link', link: 'example.com'))
     end
   end
 
@@ -45,7 +45,7 @@ describe Telephony::AlertSender do
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
-      expect(last_message.body).to eq(I18n.t('personal_key_regeneration_notice'))
+      expect(last_message.body).to eq(I18n.t('telephony.personal_key_regeneration_notice'))
     end
   end
 
@@ -55,7 +55,7 @@ describe Telephony::AlertSender do
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
-      expect(last_message.body).to eq(I18n.t('personal_key_sign_in_notice'))
+      expect(last_message.body).to eq(I18n.t('telephony.personal_key_sign_in_notice'))
     end
   end
 
@@ -65,7 +65,7 @@ describe Telephony::AlertSender do
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
-      expect(last_message.body).to eq(I18n.t('join_keyword_response'))
+      expect(last_message.body).to eq(I18n.t('telephony.join_keyword_response'))
     end
   end
 
@@ -75,7 +75,7 @@ describe Telephony::AlertSender do
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
-      expect(last_message.body).to eq(I18n.t('stop_keyword_response'))
+      expect(last_message.body).to eq(I18n.t('telephony.stop_keyword_response'))
     end
   end
 
@@ -85,7 +85,7 @@ describe Telephony::AlertSender do
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
-      expect(last_message.body).to eq(I18n.t('help_keyword_response'))
+      expect(last_message.body).to eq(I18n.t('telephony.help_keyword_response'))
     end
   end
 
@@ -95,7 +95,7 @@ describe Telephony::AlertSender do
     it 'uses the twilio adapter to send messages' do
       adapter = instance_double(Telephony::Twilio::ProgrammableSmsSender)
       expect(adapter).to receive(:send).with(
-        message: I18n.t('join_keyword_response'),
+        message: I18n.t('telephony.join_keyword_response'),
         to: recipient,
       )
       expect(Telephony::Twilio::ProgrammableSmsSender).to receive(:new).and_return(adapter)
