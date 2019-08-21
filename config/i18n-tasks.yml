@@ -1,0 +1,11 @@
+# i18n-tasks finds and manages missing and unused translations: https://github.com/glebm/i18n-tasks
+
+base_locale: en
+
+data:
+  yaml:
+    write:
+      line_width: -1
+search:
+  paths:
+  - lib/

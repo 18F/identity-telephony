@@ -6,7 +6,7 @@
   <% if repeat_url %>
     <Gather action="<%= repeat_url %>" numDigits="1">
       <Say language="<%= locale %>">
-        <%= I18n.t('twilio.programmable_voice.repeat_message', locale: locale) %>
+        <%= I18n.t('telephony.twilio.programmable_voice.repeat_message', locale: locale) %>
       </Say>
     </Gather>
   <% end %>

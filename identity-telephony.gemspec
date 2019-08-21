@@ -25,12 +25,13 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.rdoc_options = ['--charset=UTF-8']
 
+  s.add_dependency('aws-sdk-pinpoint')
   s.add_dependency('i18n')
   s.add_dependency('phonelib')
   s.add_dependency('twilio-ruby')
-  s.add_dependency('aws-sdk-pinpoint')
   s.add_dependency('typhoeus')
 
+  s.add_development_dependency('i18n-tasks')
   s.add_development_dependency('irb')
   s.add_development_dependency('pry-byebug')
   s.add_development_dependency('rake')
