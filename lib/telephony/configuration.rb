@@ -13,12 +13,12 @@ module Telephony
                   :pinpoint_region,
                   :pinpoint_access_key_id,
                   :pinpoint_secret_access_key,
-                  :pinpoint_application_id,
+                  :pinpoint_application_id
 
     def initialize
-      @adapter ||= :twilio
-      self.twilio_timeout ||= 5
-      self.twilio_record_voice ||= false
+      @adapter = :twilio
+      self.twilio_timeout = 5
+      self.twilio_record_voice = false
     end
 
     def adapter
