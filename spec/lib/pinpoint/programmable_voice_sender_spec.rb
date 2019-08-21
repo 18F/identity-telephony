@@ -1,4 +1,4 @@
-describe Telephony::Pinpoint::ProgrammableVoiceSender do
+xdescribe Telephony::Pinpoint::ProgrammableVoiceSender do
   it_behaves_like 'a pinpoint api client'
 
   describe '#send' do
