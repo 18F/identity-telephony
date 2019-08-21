@@ -33,3 +33,9 @@ RSpec.configure do |config|
 end
 
 WebMock.disable_net_connect!
+
+# Raise missing translation errors in the specs so that missing translations
+# will trigger a test failure
+I18n.exception_handler = lambda do |exception, _locale, _key, _options|
+  raise exception
+end

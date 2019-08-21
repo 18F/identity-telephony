@@ -1,14 +1,31 @@
+---
 es:
+  account_reset_cancellation_notice: 
+  account_reset_notice: Su solicitud para eliminar su cuenta de login.gov ha sido
+    cancelada.
   authentication_otp:
     sms: "%{code} es tu código de seguridad de login.gov. Use esto para continuar
-        ingresando a su cuenta. Este código caducará en %{expiration} minutos."
-    voice: "¡Hola! Su código de acceso de login.gov es, %{code}, nuevamente, su
-        código de acceso es %{code}. Este código caducará en %{expiration} minutos."
+      ingresando a su cuenta. Este código caducará en %{expiration} minutos."
+    voice: "¡Hola! Su código de acceso de login.gov es, %{code}, nuevamente, su código
+      de acceso es %{code}. Este código caducará en %{expiration} minutos."
   confirmation_otp:
-    sms: "%{code} es tu código de confirmación de login.gov. Use esto para
-        confirmar su número de teléfono. Este código caducará en %{expiration} minutos."
-    voice: "¡Hola! Su código de acceso de login.gov es, %{code}, nuevamente, su
-        código de acceso es %{code}. Este código caducará en %{expiration} minutos."
+    sms: "%{code} es tu código de confirmación de login.gov. Use esto para confirmar
+      su número de teléfono. Este código caducará en %{expiration} minutos."
+    voice: "¡Hola! Su código de acceso de login.gov es, %{code}, nuevamente, su código
+      de acceso es %{code}. Este código caducará en %{expiration} minutos."
+  doc_auth_link: 'Has solicitado verificar tu identidad en un teléfono móvil. Por
+    favor, tome una foto de la identificación emitida por su estado: %{link}'
+  help_keyword_response: Obtenga ayuda en www.login.gov/help o contáctenos en www.login.gov/contact.
+  join_keyword_response: 123456 es tu código de confirmación de login.gov. Use esto
+    para confirmar su número de teléfono. Este código caducará en 5 minutos.
+  personal_key_regeneration_notice: Se ha emitido una nueva clave personal para tu
+    cuenta login.gov. Si no eres tú, restablece tu contraseña.
+  personal_key_sign_in_notice: Su clave personal solo se utilizó para iniciar sesión
+    en su cuenta login.gov. Si no fue así, reinicie su contraseña.
+  stop_keyword_response: Ha cancelado la suscripción a las alertas de login.gov. Ya
+    no recibirá alertas a menos que vuelva a suscribirse utilizando este número de
+    teléfono para iniciar sesión o configurar una cuenta. Responda HELP para obtener
+    ayuda o visite www.login.gov/help.
   telephony_error:
     friendly_message:
       api_connection: El servidor tardó demasiado en responder. Vuelve a intentarlo.<br><br>El
@@ -20,7 +37,7 @@ es:
         enviar un SMS si tienes un teléfono que permita enviar SMS.
       invalid_phone_number: El número de teléfono ingresado no está en el formato
         correcto.
-      sms_unsupported:  El número de teléfono ingresado no admite mensajes de texto.
+      sms_unsupported: El número de teléfono ingresado no admite mensajes de texto.
         Pruebe la opción de llamada telefónica.
       voice_unsupported: Numero de telefono invalido. Verifique que haya ingresado
         el código de país o de área correcto.

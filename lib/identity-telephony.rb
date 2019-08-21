@@ -1,5 +1,7 @@
+require 'forwardable'
 require 'i18n'
 require 'twilio-ruby'
+require 'telephony/alert_sender'
 require 'telephony/configuration'
 require 'telephony/errors'
 require 'telephony/otp_sender'
@@ -20,6 +22,8 @@ require 'aws-sdk-pinpoint'
 I18n.load_path += Dir[File.dirname(__FILE__) + '/../config/locales/*.yml']
 
 module Telephony
+  extend SingleForwardable
+
   def self.config
     @config ||= Configuration.new
     yield @config if block_given?
@@ -43,4 +47,15 @@ module Telephony
       channel: channel
     ).send_confirmation_otp
   end
+
+  def self.alert_sender
+    AlertSender.new
+  end
+
+  def_delegators :alert_sender, :send_doc_auth_link,
+                 :send_personal_key_regeneration_notice,
+                 :send_personal_key_sign_in_notice, :send_join_keyword_response,
+                 :send_stop_keyword_response, :send_help_keyword_response,
+                 :send_account_reset_notice,
+                 :send_account_reset_cancellation_notice
 end
