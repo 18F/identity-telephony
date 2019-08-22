@@ -1,6 +1,16 @@
 module Telephony
   module Pinpoint
-    class ProgrammableApiClient
+    class ApiClient
+      ERROR_HASH = {
+        'DUPLICATE' => DuplicateEndpointError,
+        'OPT_OUT' => OptOutError,
+        'PERMANENT_FAILURE' => PermanentFailureError,
+        'TEMPORARY_FAILURE' => TemporaryFailureError,
+        'THROTTLED' => ThrottledError,
+        'TIMEOUT' => TimeoutError,
+        'UNKNOWN_FAILURE' => UnknownFailureError,
+      }.freeze
+
       def pinpoint_client
         @pinpoint_client ||= Aws::Pinpoint::Client.new(
           region: Telephony.config.pinpoint_region,
@@ -13,21 +23,9 @@ module Telephony
         status_code = response.status_code
         delivery_status = response.delivery_status
         return true if delivery_status == 'SUCCESSFUL'
-
         exception_message = "Pinpoint Error: #{delivery_status} - #{status_code}"
-
-        error_hash = {
-          'DUPLICATE' => DuplicateEndpointError,
-          'OPT_OUT' => OptOutError,
-          'PERMANENT_FAILURE' => PermanentFailureError,
-          'TEMPORARY_FAILURE' => TemporaryFailureError,
-          'THROTTLED' => ThrottledError,
-          'TIMEOUT' => TimeoutError,
-          'UNKNOWN_FAILURE' => UnknownFailureError,
-        }
-        exc = error_hash[response]
+        exc = ERROR_HASH[delivery_status]
         raise exc, exception_message if exc
-
         raise TelephonyError, exception_message
       end
     end
