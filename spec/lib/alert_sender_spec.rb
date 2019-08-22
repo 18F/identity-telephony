@@ -93,7 +93,7 @@ describe Telephony::AlertSender do
     let(:configured_adapter) { :pinpoint }
 
     it 'uses the poinpoint adapter to send messages' do
-      adapter = instance_double(Telephony::Pinpoint::SmsSender)
+      instance_double(Telephony::Pinpoint::SmsSender)
     end
   end
 
