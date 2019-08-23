@@ -42,9 +42,9 @@ module Telephony
       when [:twilio, :voice]
         Twilio::ProgrammableVoiceSender.new
       when [:pinpoint, :sms]
-        Pinpoint::ProgrammableSmsSender.new
+        Pinpoint::SmsSender.new
       when [:pinpoint, :voice]
-        Pinpoint::ProgrammableVoiceSender.new
+        Pinpoint::VoiceSender.new
       when [:test, :sms]
         Test::SmsSender.new
       when [:test, :voice]

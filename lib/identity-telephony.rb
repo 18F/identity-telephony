@@ -1,3 +1,4 @@
+require 'aws-sdk-pinpoint'
 require 'forwardable'
 require 'i18n'
 require 'twilio-ruby'
@@ -9,15 +10,14 @@ require 'telephony/test/call'
 require 'telephony/test/message'
 require 'telephony/test/sms_sender'
 require 'telephony/test/voice_sender'
+require 'telephony/pinpoint/sms_sender'
+require 'telephony/pinpoint/voice_sender'
 require 'telephony/twilio/programmable_sms_sender'
 require 'telephony/twilio/programmable_voice_message'
 require 'telephony/twilio/programmable_voice_message_encryptor'
 require 'telephony/twilio/programmable_voice_sender'
 require 'telephony/twilio/programmable_voice_twiml_builder'
 require 'telephony/twilio/verify_client'
-require 'telephony/pinpoint/programmable_sms_sender'
-require 'telephony/pinpoint/programmable_voice_sender'
-require 'aws-sdk-pinpoint'
 
 I18n.load_path += Dir[File.dirname(__FILE__) + '/../config/locales/*.yml']
 

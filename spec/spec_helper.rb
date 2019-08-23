@@ -31,6 +31,10 @@ RSpec.configure do |config|
   config.warnings = true
   config.order = :random
   Kernel.srand config.seed
+
+  config.before(:each) do
+    Pinpoint::MockClient.reset!
+  end
 end
 
 WebMock.disable_net_connect!

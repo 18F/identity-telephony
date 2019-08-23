@@ -253,3 +253,6 @@ Naming/UncommunicativeMethodParamName:
 
 Style/ExpandPathArguments:
   Enabled: false
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false

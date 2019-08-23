@@ -19,6 +19,7 @@ module Telephony
       @adapter = :twilio
       self.twilio_timeout = 5
       self.twilio_record_voice = false
+      self.pinpoint_region = 'us-west-2'
     end
 
     def adapter

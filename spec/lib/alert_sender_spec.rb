@@ -14,7 +14,7 @@ describe Telephony::AlertSender do
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
       expect(last_message.body).to eq(
-        I18n.t('telephony.account_reset_notice', cancel_link: 'example.com')
+        I18n.t('telephony.account_reset_notice', cancel_link: 'example.com'),
       )
     end
   end
@@ -86,6 +86,14 @@ describe Telephony::AlertSender do
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
       expect(last_message.body).to eq(I18n.t('telephony.help_keyword_response'))
+    end
+  end
+
+  context 'with the pinpoint adapter enabled' do
+    let(:configured_adapter) { :pinpoint }
+
+    it 'uses the poinpoint adapter to send messages' do
+      instance_double(Telephony::Pinpoint::SmsSender)
     end
   end
 
