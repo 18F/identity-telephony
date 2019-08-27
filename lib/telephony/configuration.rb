@@ -14,6 +14,7 @@ module Telephony
                   :pinpoint_access_key_id,
                   :pinpoint_secret_access_key,
                   :pinpoint_application_id,
+                  :pinpoint_shortcode,
                   :pinpoint_longcode_pool
 
     def initialize
