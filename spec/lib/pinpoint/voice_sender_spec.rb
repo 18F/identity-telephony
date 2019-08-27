@@ -63,7 +63,7 @@ describe Telephony::Pinpoint::VoiceSender do
       end
     end
 
-    context 'when pinpint responds with a limitted exceeded response' do
+    context 'when pinpoint responds with a limitted exceeded response' do
       it 'raises a telephony error' do
         exception = Aws::PinpointSMSVoice::Errors::LimitExceededException.new(
           Seahorse::Client::RequestContext.new,
