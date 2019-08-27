@@ -1,5 +1,3 @@
-require 'pry-byebug'
-
 require 'telephony/pinpoint/api_client'
 
 module Telephony
