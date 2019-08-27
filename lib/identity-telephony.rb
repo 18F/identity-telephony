@@ -1,4 +1,5 @@
 require 'aws-sdk-pinpoint'
+require 'aws-sdk-pinpointsmsvoice'
 require 'forwardable'
 require 'i18n'
 require 'twilio-ruby'

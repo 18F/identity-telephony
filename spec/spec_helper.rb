@@ -19,6 +19,7 @@ Telephony.config do |c|
   c.pinpoint_access_key_id = 'fake-pinpoint-access-key-id'
   c.pinpoint_secret_access_key = 'fake-pinpoint-secret-access-key'
   c.pinpoint_application_id = 'fake-pinpoint-application-id'
+  c.pinpoint_longcode_pool = ['+12223334444', '+15556667777']
 end
 
 RSpec.configure do |config|

@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ['--charset=UTF-8']
 
   s.add_dependency('aws-sdk-pinpoint')
+  s.add_dependency('aws-sdk-pinpointsmsvoice')
   s.add_dependency('i18n')
   s.add_dependency('phonelib')
   s.add_dependency('twilio-ruby')

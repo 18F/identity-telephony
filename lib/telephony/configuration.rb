@@ -13,7 +13,8 @@ module Telephony
                   :pinpoint_region,
                   :pinpoint_access_key_id,
                   :pinpoint_secret_access_key,
-                  :pinpoint_application_id
+                  :pinpoint_application_id,
+                  :pinpoint_longcode_pool
 
     def initialize
       @adapter = :twilio
