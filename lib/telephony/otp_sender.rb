@@ -35,6 +35,7 @@ module Telephony
       !%w[US CA MX].include?(destination_country)
     end
 
+    # rubocop:disable all
     def adapter
       case [Telephony.config.adapter, channel.to_sym]
       when [:twilio, :sms]
@@ -45,12 +46,19 @@ module Telephony
         Pinpoint::SmsSender.new
       when [:pinpoint, :voice]
         Pinpoint::VoiceSender.new
+      when [:pinpoint_longcode, :sms]
+        Pinpoint::LongcodeSmsSender.new
+      when [:pinpoint_longcode, :voice]
+        Pinpoint::VoiceSender.new
       when [:test, :sms]
         Test::SmsSender.new
       when [:test, :voice]
         Test::VoiceSender.new
+      else
+        raise "Unknown telephony adapter #{Telephony.config.adapter} for channel #{channel.to_sym}"
       end
     end
+    # rubocop:enable all
 
     def authentication_message
       I18n.t(

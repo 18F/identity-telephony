@@ -46,6 +46,10 @@ module Telephony
       case Telephony.config.adapter
       when :twilio
         Twilio::ProgrammableSmsSender.new
+      when :pinpoint
+        Pinpoint::SmsSender.new
+      when :pinpoint_longcode
+        Pinpoint::LongcodeSmsSender.new
       when :test
         Test::SmsSender.new
       end
