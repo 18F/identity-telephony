@@ -21,6 +21,7 @@ module Telephony
         end
       end
 
+      # rubocop:disable Metrics/MethodLength
       def handle_twilio_rest_error(err)
         error_code = err.code
         error_message = err.message
@@ -40,6 +41,11 @@ module Telephony
         else
           raise TelephonyError, exception_message
         end
+      end
+      # rubocop:enable Metrics/MethodLength
+
+      def handle_faraday_error(err)
+        raise ApiConnectionError, "Faraday error: #{err.class} - #{err.message}"
       end
     end
   end
