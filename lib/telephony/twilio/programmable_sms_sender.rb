@@ -9,8 +9,10 @@ module Telephony
           to: to,
           body: message,
         )
-      rescue ::Twilio::REST::RestError => err
-        handle_twilio_rest_error(err)
+      rescue ::Twilio::REST::RestError => e
+        handle_twilio_rest_error(e)
+      rescue Faraday::TimeoutError, Faraday::ConnectionFailed => e
+        handle_faraday_error(e)
       end
     end
   end

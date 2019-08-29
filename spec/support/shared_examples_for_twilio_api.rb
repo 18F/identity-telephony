@@ -85,5 +85,29 @@ shared_examples 'a twilio api client' do
         )
       end
     end
+
+    context 'when Faraday times out' do
+      let(:error) { Faraday::TimeoutError.new('test error') }
+      let(:raised_error_message) { 'Faraday error: Faraday::TimeoutError - test error' }
+
+      it 'raises a API connection error' do
+        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
+          Telephony::ApiConnectionError,
+          raised_error_message,
+        )
+      end
+    end
+
+    context 'when Faraday fails to make a connection' do
+      let(:error) { Faraday::ConnectionFailed.new('test error') }
+      let(:raised_error_message) { 'Faraday error: Faraday::ConnectionFailed - test error' }
+
+      it 'raises a API connection error' do
+        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
+          Telephony::ApiConnectionError,
+          raised_error_message,
+        )
+      end
+    end
   end
 end
