@@ -27,7 +27,7 @@ module Telephony
       end
 
       def callback_url
-        uri = URI.parse(Telephony.config.twilio_voice_callback_base_url)
+        uri = URI.parse(Telephony.config.twilio.voice_callback_base_url)
         uri.query = "encrypted_message=#{CGI.escape(to_encrypted_message)}"
         uri.to_s
       end

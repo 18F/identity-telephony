@@ -72,7 +72,7 @@ module Telephony
       end
 
       def self.encryption_key
-        Base64.decode64(Telephony.config.twilio_voice_callback_encryption_key)
+        Base64.decode64(Telephony.config.twilio.voice_callback_encryption_key)
       end
     end
   end

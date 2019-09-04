@@ -6,7 +6,7 @@ module Telephony
           from: from_number,
           to: to,
           url: callback_url_for_message(message),
-          record: Telephony.config.twilio_record_voice,
+          record: Telephony.config.twilio.record_voice,
         )
       rescue ::Twilio::REST::RestError => e
         handle_twilio_rest_error(e)
@@ -17,7 +17,7 @@ module Telephony
       private
 
       def from_number
-        Telephony.config.twilio_numbers.sample
+        Telephony.config.twilio.numbers.sample
       end
 
       def callback_url_for_message(message)

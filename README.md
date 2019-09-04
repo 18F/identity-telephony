@@ -8,15 +8,24 @@ This gem can be configured in this manner:
 ```ruby
 Telephony.config do |c|
   c.adapter = :twilio
-  c.twilio_numbers = ['12223334444', '15556667777']
-  c.twilio_sid = 'example-twilio-sid'
-  c.twilio_auth_token = 'example-twilio-auth-token'
-  c.twilio_messaging_service_sid = 'example-twilio-messaging-service-sid'
-  c.twilio_verify_api_key = 'example-twilio-verify-api-key'
-  c.twilio_voice_callback_encryption_key = '#### 32 byte encryption key ####'
-  c.twilio_voice_callback_base_url = 'https://example.com/api/twilo_voice'
-  c.twilio_timeout = 5 # This is optional. The default is `5`
-  c.twilio_record_voice = false # This is optional. The default is `false`
+  c.twilio.numbers = ['12223334444', '15556667777']
+  c.twilio.sid = 'example-twilio-sid'
+  c.twilio.auth_token = 'example-twilio-auth-token'
+  c.twilio.messaging_service_sid = 'example-twilio-messaging-service-sid'
+  c.twilio.verify_api_key = 'example-twilio-verify-api-key'
+  c.twilio.voice_callback_encryption_key = '#### 32 byte encryption key ####'
+  c.twilio.voice_callback_base_url = 'https://example.com/api/twilo_voice'
+  c.twilio.timeout = 5 # This is optional. The default is `5`
+  c.twilio.record_voice = false # This is optional. The default is `false`
+
+  c.pinpoint.sms.region = 'us-west-2' # This is optional, us-west-2 is the default
+  c.pinpoint.sms.application_id = 'fake-pinpoint-application-id-sms'
+  c.pinpoint.sms.shortcode = '123456'
+  c.pinpoint.sms.longcode_pool = ['+12223334444', '+15556667777']
+
+  c.pinpoint.voice.region = 'us-west-2' # This is optional, us-west-2 is the default
+  c.pinpoint.voice.application_id = 'fake-pinpoint-application-id-sms'
+  c.pinpoint.voice.longcode_pool = ['+12223334444', '+15556667777']
 end
 ```
 

@@ -5,8 +5,8 @@ module Telephony
     class ProgrammableApiClient
       def twilio_client
         @twilio_client ||= ::Twilio::REST::Client.new(
-          Telephony.config.twilio_sid,
-          Telephony.config.twilio_auth_token,
+          Telephony.config.twilio.sid,
+          Telephony.config.twilio.auth_token,
           nil,
           nil,
           http_client,
@@ -15,7 +15,7 @@ module Telephony
 
       def http_client
         @http_client ||= begin
-          client = ::Twilio::HTTP::Client.new(timeout: Telephony.config.twilio_timeout.to_i)
+          client = ::Twilio::HTTP::Client.new(timeout: Telephony.config.twilio.timeout.to_i)
           client.adapter = :typhoeus
           client
         end

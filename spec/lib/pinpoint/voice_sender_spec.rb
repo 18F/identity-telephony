@@ -21,12 +21,12 @@ describe Telephony::Pinpoint::VoiceSender do
     before do
       allow(Aws::PinpointSMSVoice::Client).to receive(:new).
         with(
-          region: Telephony.config.pinpoint_region,
-          access_key_id: Telephony.config.pinpoint_access_key_id,
-          secret_access_key: Telephony.config.pinpoint_secret_access_key,
+          region: Telephony.config.pinpoint.voice.region,
+          access_key_id: Telephony.config.pinpoint.voice.access_key_id,
+          secret_access_key: Telephony.config.pinpoint.voice.secret_access_key,
         ).
         and_return(pinpoint_sms_voice_client)
-      allow(Telephony.config.pinpoint_longcode_pool).to receive(:sample).and_return(sending_phone)
+      allow(Telephony.config.pinpoint.voice.longcode_pool).to receive(:sample).and_return(sending_phone)
     end
 
     it 'initializes a pinpoint sms and voice client and uses that to send a message' do

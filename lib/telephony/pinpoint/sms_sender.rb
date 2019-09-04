@@ -14,7 +14,7 @@ module Telephony
       # rubocop:disable Metrics/MethodLength
       def send(message:, to:)
         response = pinpoint_client.send_messages(
-          application_id: Telephony.config.pinpoint_application_id,
+          application_id: Telephony.config.pinpoint.sms.application_id,
           message_request: {
             addresses: {
               to => {
@@ -37,16 +37,16 @@ module Telephony
       protected
 
       def origination_number
-        Telephony.config.pinpoint_shortcode
+        Telephony.config.pinpoint.sms.shortcode
       end
 
       private
 
       def pinpoint_client
         @pinpoint_client ||= Aws::Pinpoint::Client.new(
-          region: Telephony.config.pinpoint_region,
-          access_key_id: Telephony.config.pinpoint_access_key_id,
-          secret_access_key: Telephony.config.pinpoint_secret_access_key,
+          region: Telephony.config.pinpoint.sms.region,
+          access_key_id: Telephony.config.pinpoint.sms.access_key_id,
+          secret_access_key: Telephony.config.pinpoint.sms.secret_access_key,
         )
       end
 

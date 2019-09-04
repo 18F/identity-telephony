@@ -5,14 +5,14 @@ describe Telephony::Twilio::ProgrammableVoiceSender do
     it 'initializes a twilio client and uses that to place a call with a random number' do
       client = instance_double(::Twilio::REST::Client)
       expect(::Twilio::REST::Client).to receive(:new).with(
-        Telephony.config.twilio_sid,
-        Telephony.config.twilio_auth_token,
+        Telephony.config.twilio.sid,
+        Telephony.config.twilio.auth_token,
         nil,
         nil,
-        instance_of(::Twilio::HTTP::Client)
+        instance_of(::Twilio::HTTP::Client),
       ).and_return(client)
 
-      expect(Telephony.config.twilio_numbers).to receive(:sample).and_return('12223334444')
+      expect(Telephony.config.twilio.numbers).to receive(:sample).and_return('12223334444')
 
       calls = double
       expect(client).to receive(:calls).and_return(calls)
