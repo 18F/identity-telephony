@@ -25,7 +25,6 @@ Telephony.config do |c|
   c.pinpoint.voice.region = 'fake-pinpoint-region-voice'
   c.pinpoint.voice.access_key_id = 'fake-pinpoint-access-key-id-voice'
   c.pinpoint.voice.secret_access_key = 'fake-pinpoint-secret-access-key-voice'
-  c.pinpoint.voice.application_id = 'fake-pinpoint-application-id-voice'
   c.pinpoint.voice.longcode_pool = ['+12223334444', '+15556667777']
 end
 

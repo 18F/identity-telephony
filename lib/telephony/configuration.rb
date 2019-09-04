@@ -18,10 +18,10 @@ module Telephony
     keyword_init: true,
   )
   PINPOINT_CONFIGURATION_NAMES = [
-    :region, :access_key_id, :secret_access_key, :application_id, :longcode_pool
+    :region, :access_key_id, :secret_access_key, :longcode_pool
   ].freeze
   PinpointVoiceConfiguration = Struct.new(*PINPOINT_CONFIGURATION_NAMES)
-  PinpointSmsConfiguration = Struct.new(:shortcode, *PINPOINT_CONFIGURATION_NAMES)
+  PinpointSmsConfiguration = Struct.new(:application_id, :shortcode, *PINPOINT_CONFIGURATION_NAMES)
 
   class Configuration
     attr_writer :adapter

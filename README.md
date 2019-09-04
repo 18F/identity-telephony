@@ -24,7 +24,6 @@ Telephony.config do |c|
   c.pinpoint.sms.longcode_pool = ['+12223334444', '+15556667777']
 
   c.pinpoint.voice.region = 'us-west-2' # This is optional, us-west-2 is the default
-  c.pinpoint.voice.application_id = 'fake-pinpoint-application-id-sms'
   c.pinpoint.voice.longcode_pool = ['+12223334444', '+15556667777']
 end
 ```
