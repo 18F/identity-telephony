@@ -37,7 +37,7 @@ describe Telephony::Twilio::ProgrammableVoiceMessage do
     it 'returns a url with the correct base url and a message that can be parsed from the params' do
       callback_url = subject.callback_url
 
-      expect(callback_url).to match(/^#{Telephony.config.twilio_voice_callback_base_url}/)
+      expect(callback_url).to match(/^#{Telephony.config.twilio.voice_callback_base_url}/)
 
       parsed_message = described_class.from_callback(callback_url)
 

@@ -13,7 +13,7 @@ module Telephony
             },
           },
           destination_phone_number: to,
-          origination_phone_number: Telephony.config.pinpoint_longcode_pool.sample,
+          origination_phone_number: Telephony.config.pinpoint.voice.longcode_pool.sample,
         )
       rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
         handle_pinpoint_error(e)
@@ -24,9 +24,9 @@ module Telephony
 
       def pinpoint_client
         @pinpoint_client ||= Aws::PinpointSMSVoice::Client.new(
-          region: Telephony.config.pinpoint_region,
-          access_key_id: Telephony.config.pinpoint_access_key_id,
-          secret_access_key: Telephony.config.pinpoint_secret_access_key,
+          region: Telephony.config.pinpoint.voice.region,
+          access_key_id: Telephony.config.pinpoint.voice.access_key_id,
+          secret_access_key: Telephony.config.pinpoint.voice.secret_access_key,
         )
       end
 

@@ -7,20 +7,26 @@ Dir[File.dirname(__FILE__) + '/support/*.rb'].sort.each { |file| require file }
 
 # Setup some default configs
 Telephony.config do |c|
-  c.twilio_numbers = ['12223334444', '15556667777']
-  c.twilio_sid = 'fake-twilio-sid'
-  c.twilio_auth_token = 'fake-twilio-auth-token'
-  c.twilio_messaging_service_sid = 'fake-twilio-messaging-service-sid'
-  c.twilio_verify_api_key = 'fake-twilio-verify-api-key'
-  c.twilio_voice_callback_encryption_key = Base64.strict_encode64('0' * 32)
-  c.twilio_voice_callback_base_url = 'https://example.com/api/voice'
+  c.twilio.numbers = ['12223334444', '15556667777']
+  c.twilio.sid = 'fake-twilio-sid'
+  c.twilio.auth_token = 'fake-twilio-auth-token'
+  c.twilio.messaging_service_sid = 'fake-twilio-messaging-service-sid'
+  c.twilio.verify_api_key = 'fake-twilio-verify-api-key'
+  c.twilio.voice_callback_encryption_key = Base64.strict_encode64('0' * 32)
+  c.twilio.voice_callback_base_url = 'https://example.com/api/voice'
 
-  c.pinpoint_region = 'fake-pinpoint-region'
-  c.pinpoint_access_key_id = 'fake-pinpoint-access-key-id'
-  c.pinpoint_secret_access_key = 'fake-pinpoint-secret-access-key'
-  c.pinpoint_application_id = 'fake-pinpoint-application-id'
-  c.pinpoint_shortcode = '123456'
-  c.pinpoint_longcode_pool = ['+12223334444', '+15556667777']
+  c.pinpoint.sms.region = 'fake-pinpoint-region-sms'
+  c.pinpoint.sms.access_key_id = 'fake-pinpoint-access-key-id-sms'
+  c.pinpoint.sms.secret_access_key = 'fake-pinpoint-secret-access-key-sms'
+  c.pinpoint.sms.application_id = 'fake-pinpoint-application-id-sms'
+  c.pinpoint.sms.shortcode = '123456'
+  c.pinpoint.sms.longcode_pool = ['+12223334444', '+15556667777']
+
+  c.pinpoint.voice.region = 'fake-pinpoint-region-voice'
+  c.pinpoint.voice.access_key_id = 'fake-pinpoint-access-key-id-voice'
+  c.pinpoint.voice.secret_access_key = 'fake-pinpoint-secret-access-key-voice'
+  c.pinpoint.voice.application_id = 'fake-pinpoint-application-id-voice'
+  c.pinpoint.voice.longcode_pool = ['+12223334444', '+15556667777']
 end
 
 RSpec.configure do |config|

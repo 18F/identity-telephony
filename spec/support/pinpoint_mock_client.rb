@@ -19,7 +19,7 @@ module Pinpoint
     MessageResponseResult = Struct.new(:status_code, :delivery_status)
 
     def send_messages(request)
-      expect(request[:application_id]).to eq(Telephony.config.pinpoint_application_id)
+      expect(request[:application_id]).to eq(Telephony.config.pinpoint.sms.application_id)
 
       self.class.last_request = request
 

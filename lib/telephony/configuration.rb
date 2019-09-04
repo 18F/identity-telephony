@@ -1,27 +1,42 @@
 module Telephony
+  TwilioConfiguration = Struct.new(
+    :timeout,
+    :numbers,
+    :sid,
+    :auth_token,
+    :messaging_service_sid,
+    :record_voice,
+    :verify_api_key,
+    :voice_callback_encryption_key,
+    :voice_callback_base_url,
+    keyword_init: true,
+  )
+
+  PinpointConfiguration = Struct.new(
+    :sms,
+    :voice,
+    keyword_init: true,
+  )
+  PINPOINT_CONFIGURATION_NAMES = [
+    :region, :access_key_id, :secret_access_key, :application_id, :longcode_pool
+  ].freeze
+  PinpointVoiceConfiguration = Struct.new(*PINPOINT_CONFIGURATION_NAMES)
+  PinpointSmsConfiguration = Struct.new(:shortcode, *PINPOINT_CONFIGURATION_NAMES)
+
   class Configuration
-    attr_writer   :adapter
-    attr_accessor :twilio_timeout,
-                  :twilio_numbers,
-                  :twilio_sid,
-                  :twilio_auth_token,
-                  :twilio_messaging_service_sid,
-                  :twilio_record_voice,
-                  :twilio_verify_api_key,
-                  :twilio_voice_callback_encryption_key,
-                  :twilio_voice_callback_base_url,
-                  :pinpoint_region,
-                  :pinpoint_access_key_id,
-                  :pinpoint_secret_access_key,
-                  :pinpoint_application_id,
-                  :pinpoint_shortcode,
-                  :pinpoint_longcode_pool
+    attr_writer :adapter
+    attr_reader :twilio, :pinpoint
 
     def initialize
       @adapter = :twilio
-      self.twilio_timeout = 5
-      self.twilio_record_voice = false
-      self.pinpoint_region = 'us-west-2'
+      @twilio = TwilioConfiguration.new(timeout: 5, record_voice: false)
+      pinpoint_voice = PinpointVoiceConfiguration.new(
+        region: 'us-west-2',
+      )
+      pinpoint_sms = PinpointSmsConfiguration.new(
+        region: 'us-west-2',
+      )
+      @pinpoint = PinpointConfiguration.new(voice: pinpoint_voice, sms: pinpoint_sms)
     end
 
     def adapter

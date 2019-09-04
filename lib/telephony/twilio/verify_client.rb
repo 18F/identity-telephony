@@ -28,7 +28,7 @@ module Telephony
       def response
         @response ||= http_client.post do |request|
           request.url AUTHY_VERIFY_ENDPOINT
-          request.headers['X-Authy-API-Key'] = Telephony.config.twilio_verify_api_key
+          request.headers['X-Authy-API-Key'] = Telephony.config.twilio.verify_api_key
           request.body = request_body
         end
       end
@@ -94,7 +94,7 @@ module Telephony
       end
 
       def http_timeout
-        @http_timeout ||= Telephony.config.twilio_timeout.to_i
+        @http_timeout ||= Telephony.config.twilio.timeout.to_i
       end
     end
   end

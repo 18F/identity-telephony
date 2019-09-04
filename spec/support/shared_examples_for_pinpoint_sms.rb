@@ -7,9 +7,9 @@ shared_examples 'a pinpoint sms client' do
     before do
       allow(Aws::Pinpoint::Client).to receive(:new).
         with(
-          region: Telephony.config.pinpoint_region,
-          access_key_id: Telephony.config.pinpoint_access_key_id,
-          secret_access_key: Telephony.config.pinpoint_secret_access_key,
+          region: Telephony.config.pinpoint.sms.region,
+          access_key_id: Telephony.config.pinpoint.sms.access_key_id,
+          secret_access_key: Telephony.config.pinpoint.sms.secret_access_key,
         ).
         and_return(Pinpoint::MockClient.new)
 

@@ -5,7 +5,7 @@ module Telephony
     class ProgrammableSmsSender < ProgrammableApiClient
       def send(message:, to:)
         twilio_client.messages.create(
-          messaging_service_sid: Telephony.config.twilio_messaging_service_sid,
+          messaging_service_sid: Telephony.config.twilio.messaging_service_sid,
           to: to,
           body: message,
         )
