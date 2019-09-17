@@ -5,11 +5,16 @@ shared_examples 'a pinpoint sms client' do
     let(:raised_error_message) { "Pinpoint Error: #{delivery_status} - #{status_code}" }
 
     before do
+      credential_builder = instance_double(Telephony::Pinpoint::AwsCredentialBuilder)
+      credentials = instance_double(Aws::Credentials)
+      allow(Telephony::Pinpoint::AwsCredentialBuilder).to receive(:new).
+        with(:sms).
+        and_return(credential_builder)
+      allow(credential_builder).to receive(:call).and_return(credentials)
       allow(Aws::Pinpoint::Client).to receive(:new).
         with(
           region: Telephony.config.pinpoint.sms.region,
-          access_key_id: Telephony.config.pinpoint.sms.access_key_id,
-          secret_access_key: Telephony.config.pinpoint.sms.secret_access_key,
+          credentials: credentials,
         ).
         and_return(Pinpoint::MockClient.new)
 

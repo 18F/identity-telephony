@@ -3,11 +3,16 @@ describe Telephony::Pinpoint::SmsSender do
 
   describe '#send' do
     it 'initializes a pinpoint client and uses that to send a message with a shortcode' do
+      credential_builder = instance_double(Telephony::Pinpoint::AwsCredentialBuilder)
+      credentials = instance_double(Aws::Credentials)
+      expect(Telephony::Pinpoint::AwsCredentialBuilder).to receive(:new).
+        with(:sms).
+        and_return(credential_builder)
+      expect(credential_builder).to receive(:call).and_return(credentials)
       expect(Aws::Pinpoint::Client).to receive(:new).
         with(
           region: Telephony.config.pinpoint.sms.region,
-          access_key_id: Telephony.config.pinpoint.sms.access_key_id,
-          secret_access_key: Telephony.config.pinpoint.sms.secret_access_key,
+          credentials: credentials,
         ).
         and_return(Pinpoint::MockClient.new)
 
