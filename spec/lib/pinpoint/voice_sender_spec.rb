@@ -19,11 +19,16 @@ describe Telephony::Pinpoint::VoiceSender do
     end
 
     before do
+      credential_builder = instance_double(Telephony::Pinpoint::AwsCredentialBuilder)
+      credentials = instance_double(Aws::Credentials)
+      allow(Telephony::Pinpoint::AwsCredentialBuilder).to receive(:new).
+        with(:voice).
+        and_return(credential_builder)
+      allow(credential_builder).to receive(:call).and_return(credentials)
       allow(Aws::PinpointSMSVoice::Client).to receive(:new).
         with(
           region: Telephony.config.pinpoint.voice.region,
-          access_key_id: Telephony.config.pinpoint.voice.access_key_id,
-          secret_access_key: Telephony.config.pinpoint.voice.secret_access_key,
+          credentials: credentials,
         ).
         and_return(pinpoint_sms_voice_client)
       allow(Telephony.config.pinpoint.voice.longcode_pool).to receive(:sample).and_return(sending_phone)

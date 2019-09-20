@@ -45,8 +45,7 @@ module Telephony
       def pinpoint_client
         @pinpoint_client ||= Aws::Pinpoint::Client.new(
           region: Telephony.config.pinpoint.sms.region,
-          access_key_id: Telephony.config.pinpoint.sms.access_key_id,
-          secret_access_key: Telephony.config.pinpoint.sms.secret_access_key,
+          credentials: AwsCredentialBuilder.new(:sms).call,
         )
       end
 
