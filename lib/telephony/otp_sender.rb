@@ -28,11 +28,17 @@ module Telephony
     private
 
     def should_use_twilio_verify?
-      return false unless Telephony.config.adapter == :twilio
       return false unless channel == :sms
+      return false if Telephony.config.adapter == :test
+      return false unless twilio_enabled_or_override_set?
 
       destination_country = Phonelib.parse(recipient_phone).country
-      !%w[US CA MX].include?(destination_country)
+      !['US', 'CA', 'MX'].include?(destination_country)
+    end
+
+    def twilio_enabled_or_override_set?
+      Telephony.config.adapter == :twilio ||
+        Telephony.config.twilio.verify_override_for_intl_sms == true
     end
 
     # rubocop:disable all
