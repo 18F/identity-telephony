@@ -33,7 +33,7 @@ module Telephony
       return false unless twilio_enabled_or_override_set?
 
       destination_country = Phonelib.parse(recipient_phone).country
-      !['US', 'CA', 'MX'].include?(destination_country)
+      destination_country != 'US'
     end
 
     def twilio_enabled_or_override_set?
