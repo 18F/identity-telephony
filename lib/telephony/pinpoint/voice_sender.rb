@@ -24,7 +24,7 @@ module Telephony
 
       def pinpoint_client
         credentials = AwsCredentialBuilder.new(:voice).call
-        args = { region: Telephony.config.pinpoint.sms.region }
+        args = { region: Telephony.config.pinpoint.voice.region }
         args[:credentials] = credentials unless credentials.nil?
         @pinpoint_client ||= Aws::PinpointSMSVoice::Client.new(args)
       end
