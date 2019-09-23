@@ -23,10 +23,10 @@ module Telephony
       private
 
       def pinpoint_client
-        @pinpoint_client ||= Aws::PinpointSMSVoice::Client.new(
-          region: Telephony.config.pinpoint.voice.region,
-          credentials: AwsCredentialBuilder.new(:voice).call,
-        )
+        credentials = AwsCredentialBuilder.new(:voice).call
+        args = { region: Telephony.config.pinpoint.sms.region }
+        args[:credentials] = credentials unless credentials.nil?
+        @pinpoint_client ||= Aws::PinpointSMSVoice::Client.new(args)
       end
 
       def handle_pinpoint_error(err)
