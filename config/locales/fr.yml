@@ -4,10 +4,10 @@ fr:
     account_reset_cancellation_notice: Votre demande de suppression de votre compte login.gov a été annulée.
     account_reset_notice: 'Vous avez demandé à supprimer votre compte login.gov. Votre demande sera être traité en 24 heures. Si vous ne souhaitez pas supprimer votre compte, veuillez cancel: %{cancel_link}'
     authentication_otp:
-      sms: "Entrez %{code} dans login.gov pour continuer à vous connecter à votre compte. Ce code de sécurité expirera dans %{expiration} minutes."
+      sms: Entrez %{code} dans login.gov pour continuer à vous connecter à votre compte. Ce code de sécurité expirera dans %{expiration} minutes.
       voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est, %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera dans %{expiration} minutes.
     confirmation_otp:
-      sms: "Entrez %{code} dans login.gov pour confirmer votre numéro de téléphone. Ce code de sécurité expirera dans %{expiration} minutes."
+      sms: Entrez %{code} dans login.gov pour confirmer votre numéro de téléphone. Ce code de sécurité expirera dans %{expiration} minutes.
       voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est, %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera dans %{expiration} minutes.
     doc_auth_link: 'Vous avez demandé à vérifier votre identité sur un téléphone mobile. S''il vous plaît prendre une photo de votre identité émise par l''état: %{link}'
     error:
