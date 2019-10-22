@@ -4,10 +4,10 @@ es:
     account_reset_cancellation_notice: Votre demande de suppression de votre compte login.gov a été annulée.
     account_reset_notice: Su solicitud para eliminar su cuenta de login.gov ha sido cancelada.
     authentication_otp:
-      sms: "%{code} es tu código de seguridad de login.gov. Use esto para continuar ingresando a su cuenta. Este código caducará en %{expiration} minutos."
+      sms: "Ingrese %{code} en login.gov para continuar iniciando sesión. Este código de seguridad caducará en %{expiration} minutos."
       voice: "¡Hola! Su código de acceso de login.gov es, %{code}, nuevamente, su código de acceso es %{code}. Este código caducará en %{expiration} minutos."
     confirmation_otp:
-      sms: "%{code} es tu código de confirmación de login.gov. Use esto para confirmar su número de teléfono. Este código caducará en %{expiration} minutos."
+      sms: "Ingrese %{code} en login.gov para confirmar su número de teléfono. Este código de seguridad caducará en %{expiration} minutos."
       voice: "¡Hola! Su código de acceso de login.gov es, %{code}, nuevamente, su código de acceso es %{code}. Este código caducará en %{expiration} minutos."
     doc_auth_link: 'Has solicitado verificar tu identidad en un teléfono móvil. Por favor, tome una foto de la identificación emitida por su estado: %{link}'
     error:
