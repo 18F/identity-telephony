@@ -10,36 +10,14 @@ module Telephony
     end
 
     def send_authentication_otp
-      if should_use_twilio_verify?
-        return Twilio::VerifyClient.new.send(otp: otp, to: recipient_phone)
-      end
-
       adapter.send(message: authentication_message, to: recipient_phone)
     end
 
     def send_confirmation_otp
-      if should_use_twilio_verify?
-        return Twilio::VerifyClient.new.send(otp: otp, to: recipient_phone)
-      end
-
       adapter.send(message: confirmation_message, to: recipient_phone)
     end
 
     private
-
-    def should_use_twilio_verify?
-      return false unless channel == :sms
-      return false if Telephony.config.adapter == :test
-      return false unless twilio_enabled_or_override_set?
-
-      destination_country = Phonelib.parse(recipient_phone).country
-      destination_country != 'US'
-    end
-
-    def twilio_enabled_or_override_set?
-      Telephony.config.adapter == :twilio ||
-        Telephony.config.twilio.verify_override_for_intl_sms == true
-    end
 
     # rubocop:disable all
     def adapter
@@ -51,10 +29,6 @@ module Telephony
       when [:pinpoint, :sms]
         Pinpoint::SmsSender.new
       when [:pinpoint, :voice]
-        Pinpoint::VoiceSender.new
-      when [:pinpoint_longcode, :sms]
-        Pinpoint::LongcodeSmsSender.new
-      when [:pinpoint_longcode, :voice]
         Pinpoint::VoiceSender.new
       when [:test, :sms]
         Test::SmsSender.new

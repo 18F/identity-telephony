@@ -32,6 +32,7 @@ describe Telephony::Pinpoint::AwsCredentialBuilder do
           role_session_name: credential_role_session_name,
           role_arn: credential_role_arn,
           external_id: credential_external_id,
+          client: instance_of(Aws::STS::Client),
         ).and_return(expected_credential)
 
         result = subject.call

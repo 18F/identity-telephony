@@ -6,7 +6,6 @@ module Telephony
     :auth_token,
     :messaging_service_sid,
     :record_voice,
-    :verify_override_for_intl_sms,
     :verify_api_key,
     :voice_callback_encryption_key,
     :voice_callback_base_url,
@@ -35,7 +34,6 @@ module Telephony
       @twilio = TwilioConfiguration.new(
         timeout: 5,
         record_voice: false,
-        verify_override_for_intl_sms: true,
       )
       pinpoint_voice = PinpointVoiceConfiguration.new(
         region: 'us-west-2',

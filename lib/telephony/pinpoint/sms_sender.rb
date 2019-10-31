@@ -25,7 +25,7 @@ module Telephony
               sms_message: {
                 body: message,
                 message_type: 'TRANSACTIONAL',
-                origination_number: origination_number,
+                origination_number: Telephony.config.pinpoint.sms.shortcode,
               },
             },
           },
@@ -33,12 +33,6 @@ module Telephony
         raise_if_error(response.message_response.result[to])
       end
       # rubocop:enable Metrics/MethodLength
-
-      protected
-
-      def origination_number
-        Telephony.config.pinpoint.sms.shortcode
-      end
 
       private
 

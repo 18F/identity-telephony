@@ -10,7 +10,7 @@ describe Telephony::OtpSender do
       allow(Telephony.config).to receive(:adapter).and_return(:twilio)
     end
 
-    context 'for domestic SMS' do
+    context 'for SMS' do
       let(:channel) { :sms }
 
       it 'sends an authentication OTP with Twilio Programmable SMS' do
@@ -34,7 +34,7 @@ describe Telephony::OtpSender do
       end
     end
 
-    context 'for domestic voice' do
+    context 'for voice' do
       let(:channel) { :voice }
 
       it 'sends an authentication OTP with Twilio Programmable Voice' do
@@ -53,27 +53,6 @@ describe Telephony::OtpSender do
         adapter = instance_double(Telephony::Twilio::ProgrammableVoiceSender)
         expect(adapter).to receive(:send).with(message: message, to: to)
         expect(Telephony::Twilio::ProgrammableVoiceSender).to receive(:new).and_return(adapter)
-
-        subject.send_confirmation_otp
-      end
-    end
-
-    context 'for international SMS' do
-      let(:channel) { :sms }
-      let(:to) { '+81543543643' }
-
-      it 'sends an authentication OTP with Twilio Verify' do
-        verify_client = instance_double(Telephony::Twilio::VerifyClient)
-        expect(verify_client).to receive(:send).with(otp: otp, to: to)
-        expect(Telephony::Twilio::VerifyClient).to receive(:new).and_return(verify_client)
-
-        subject.send_authentication_otp
-      end
-
-      it 'sends a confirmation OTP with Twilio Verify' do
-        verify_client = instance_double(Telephony::Twilio::VerifyClient)
-        expect(verify_client).to receive(:send).with(otp: otp, to: to)
-        expect(Telephony::Twilio::VerifyClient).to receive(:new).and_return(verify_client)
 
         subject.send_confirmation_otp
       end
