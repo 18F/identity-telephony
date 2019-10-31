@@ -29,6 +29,7 @@ describe Telephony::Pinpoint::VoiceSender do
         with(
           region: Telephony.config.pinpoint.voice.region,
           credentials: credentials,
+          retry_limit: 1,
         ).
         and_return(pinpoint_sms_voice_client)
       allow(Telephony.config.pinpoint.voice.longcode_pool).to receive(:sample).and_return(sending_phone)
