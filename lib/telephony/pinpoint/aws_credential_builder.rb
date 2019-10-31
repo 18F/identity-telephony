@@ -22,6 +22,7 @@ module Telephony
           role_arn: pinpoint_config.credential_role_arn,
           role_session_name: pinpoint_config.credential_role_session_name,
           external_id: pinpoint_config.credential_external_id,
+          client: Aws::STS::Client.new(region: pinpoint_config.region),
         )
       end
 
