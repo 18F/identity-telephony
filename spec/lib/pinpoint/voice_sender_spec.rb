@@ -27,7 +27,6 @@ describe Telephony::Pinpoint::VoiceSender do
       allow(credential_builder).to receive(:call).and_return(credentials)
       allow(Aws::PinpointSMSVoice::Client).to receive(:new).
         with(
-
           region: Telephony.config.pinpoint.voice.region,
           credentials: credentials,
           retry_limit: 1,
