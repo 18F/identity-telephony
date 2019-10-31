@@ -6,6 +6,7 @@ describe Telephony::Pinpoint::AwsCredentialBuilder do
   let(:credential_external_id) { nil }
   let(:access_key_id) { nil }
   let(:secret_access_key) { nil }
+  let(:region) { 'us-west-2' }
 
   shared_examples_for 'an AWS credential builder for a channel' do
     before do
@@ -19,6 +20,8 @@ describe Telephony::Pinpoint::AwsCredentialBuilder do
         and_return(access_key_id)
       allow(Telephony.config.pinpoint.send(channel)).to receive(:secret_access_key).
         and_return(secret_access_key)
+      allow(Telephony.config.pinpoint.send(channel)).to receive(:region).
+        and_return(region)
     end
 
     context 'with assumed roles in the config' do
@@ -27,12 +30,14 @@ describe Telephony::Pinpoint::AwsCredentialBuilder do
       let(:credential_external_id) { 'asdf1234' }
 
       it 'returns an assumed role credential' do
+        sts_client = double(Aws::STS::Client)
+        allow(Aws::STS::Client).to receive(:new).with(region: region).and_return(sts_client)
         expected_credential = instance_double(Aws::AssumeRoleCredentials)
         expect(Aws::AssumeRoleCredentials).to receive(:new).with(
           role_session_name: credential_role_session_name,
           role_arn: credential_role_arn,
           external_id: credential_external_id,
-          client: instance_of(Aws::STS::Client),
+          client: sts_client,
         ).and_return(expected_credential)
 
         result = subject.call
