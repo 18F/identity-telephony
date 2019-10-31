@@ -13,6 +13,7 @@ describe Telephony::Pinpoint::SmsSender do
         with(
           region: Telephony.config.pinpoint.sms.region,
           credentials: credentials,
+          retry_limit: 1,
         ).
         and_return(Pinpoint::MockClient.new)
 
