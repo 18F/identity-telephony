@@ -11,7 +11,7 @@ describe Telephony::Pinpoint::AwsCredentialBuilder do
   shared_examples_for 'an AWS credential builder for a channel' do
     before do
       allow(Telephony.config.pinpoint.send(channel)).to receive(:credential_role_session_name).
-          and_return(credential_role_session_name)
+        and_return(credential_role_session_name)
       allow(Telephony.config.pinpoint.send(channel)).to receive(:credential_role_arn).
         and_return(credential_role_arn)
       allow(Telephony.config.pinpoint.send(channel)).to receive(:credential_external_id).
