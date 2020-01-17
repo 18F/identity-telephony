@@ -21,31 +21,37 @@ module Telephony
         end
       end
 
-      # rubocop:disable Metrics/MethodLength
       def handle_twilio_rest_error(err)
         error_code = err.code
         error_message = err.message
-        exception_message = "Twilio REST API Error: #{error_code} - #{error_message}"
+        error_message = "Twilio REST API Error: #{error_code} - #{error_message}"
+        error_class = error_class_for_code(error_code)
+        error = error_class.new(error_message)
+        Response.new(success: false, error: error)
+      end
 
-        case error_code
+      # rubocop:disable Metrics/MethodLength
+      def error_class_for_code(code)
+        case code
         when 21_211
-          raise InvalidPhoneNumberError, exception_message
+          InvalidPhoneNumberError
         when 21_614
-          raise SmsUnsupportedError, exception_message
+          SmsUnsupportedError
         when 13_224
-          raise VoiceUnsupportedError, exception_message
+          VoiceUnsupportedError
         when 21_215
-          raise InvalidCallingAreaError, exception_message
+          InvalidCallingAreaError
         when 4_815_162_342
-          raise ApiConnectionError, exception_message
+          ApiConnectionError
         else
-          raise TelephonyError, exception_message
+          TelephonyError
         end
       end
       # rubocop:enable Metrics/MethodLength
 
       def handle_faraday_error(err)
-        raise ApiConnectionError, "Faraday error: #{err.class} - #{err.message}"
+        error = ApiConnectionError.new("Faraday error: #{err.class} - #{err.message}")
+        Response.new(success: false, error: error)
       end
     end
   end

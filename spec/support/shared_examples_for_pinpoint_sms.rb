@@ -27,10 +27,12 @@ shared_examples 'a pinpoint sms client' do
       let(:delivery_status) { 'DUPLICATE' }
 
       it 'raises a duplicate endpoint error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::DuplicateEndpointError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::DuplicateEndpointError.new(raised_error_message))
+        expect(response.extra[:delivery_status]).to eq('DUPLICATE')
+        expect(response.extra[:request_id]).to eq('fake-message-request-id')
       end
     end
 
@@ -38,21 +40,25 @@ shared_examples 'a pinpoint sms client' do
       let(:delivery_status) { 'OPT_OUT' }
 
       it 'raises an opt out error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::OptOutError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::OptOutError.new(raised_error_message))
+        expect(response.extra[:delivery_status]).to eq('OPT_OUT')
+        expect(response.extra[:request_id]).to eq('fake-message-request-id')
       end
     end
 
     context 'when a permanent failure occurs' do
       let(:delivery_status) { 'PERMANENT_FAILURE' }
 
-      it 'raises an opt out error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::PermanentFailureError,
-          raised_error_message,
-        )
+      it 'raises a permanent failure error' do
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::PermanentFailureError.new(raised_error_message))
+        expect(response.extra[:delivery_status]).to eq('PERMANENT_FAILURE')
+        expect(response.extra[:request_id]).to eq('fake-message-request-id')
       end
     end
 
@@ -60,10 +66,12 @@ shared_examples 'a pinpoint sms client' do
       let(:delivery_status) { 'TEMPORARY_FAILURE' }
 
       it 'raises an opt out error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::TemporaryFailureError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::TemporaryFailureError.new(raised_error_message))
+        expect(response.extra[:delivery_status]).to eq('TEMPORARY_FAILURE')
+        expect(response.extra[:request_id]).to eq('fake-message-request-id')
       end
     end
 
@@ -71,10 +79,12 @@ shared_examples 'a pinpoint sms client' do
       let(:delivery_status) { 'THROTTLED' }
 
       it 'raises an opt out error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::ThrottledError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::ThrottledError.new(raised_error_message))
+        expect(response.extra[:delivery_status]).to eq('THROTTLED')
+        expect(response.extra[:request_id]).to eq('fake-message-request-id')
       end
     end
 
@@ -82,10 +92,12 @@ shared_examples 'a pinpoint sms client' do
       let(:delivery_status) { 'TIMEOUT' }
 
       it 'raises an opt out error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::TimeoutError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::TimeoutError.new(raised_error_message))
+        expect(response.extra[:delivery_status]).to eq('TIMEOUT')
+        expect(response.extra[:request_id]).to eq('fake-message-request-id')
       end
     end
 
@@ -93,10 +105,12 @@ shared_examples 'a pinpoint sms client' do
       let(:delivery_status) { 'UNKNOWN_FAILURE' }
 
       it 'raises an opt out error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::UnknownFailureError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::UnknownFailureError.new(raised_error_message))
+        expect(response.extra[:delivery_status]).to eq('UNKNOWN_FAILURE')
+        expect(response.extra[:request_id]).to eq('fake-message-request-id')
       end
     end
 
@@ -104,10 +118,12 @@ shared_examples 'a pinpoint sms client' do
       let(:delivery_status) { '' }
 
       it 'raises a generic telephony error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::TelephonyError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::TelephonyError.new(raised_error_message))
+        expect(response.extra[:delivery_status]).to eq('')
+        expect(response.extra[:request_id]).to eq('fake-message-request-id')
       end
     end
   end

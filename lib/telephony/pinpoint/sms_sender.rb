@@ -13,7 +13,7 @@ module Telephony
 
       # rubocop:disable Metrics/MethodLength
       def send(message:, to:)
-        response = pinpoint_client.send_messages(
+        @pinpoint_response = pinpoint_client.send_messages(
           application_id: Telephony.config.pinpoint.sms.application_id,
           message_request: {
             addresses: {
@@ -30,11 +30,13 @@ module Telephony
             },
           },
         )
-        raise_if_error(response.message_response.result[to])
+        response
       end
       # rubocop:enable Metrics/MethodLength
 
       private
+
+      attr_reader :pinpoint_response
 
       def pinpoint_client
         credentials = AwsCredentialBuilder.new(:sms).call
@@ -43,14 +45,40 @@ module Telephony
         @pinpoint_client ||= Aws::Pinpoint::Client.new(args)
       end
 
-      def raise_if_error(response)
-        status_code = response.status_code
-        delivery_status = response.delivery_status
-        return true if delivery_status == 'SUCCESSFUL'
-        exception_message = "Pinpoint Error: #{delivery_status} - #{status_code}"
-        exc = ERROR_HASH[delivery_status]
-        raise exc, exception_message if exc
-        raise TelephonyError, exception_message
+      # rubocop:disable Metrics/MethodLength
+      def response
+        Response.new(
+          success: success?,
+          error: error,
+          extra: {
+            request_id: pinpoint_response.message_response.request_id,
+            delivery_status: message_response_result.delivery_status,
+            message_id: message_response_result.message_id,
+            status_code: message_response_result.status_code,
+            status_message: message_response_result.status_message,
+          }
+        )
+      end
+      # rubocop:enable Metrics/MethodLength
+
+      def success?
+        @success ||= message_response_result.delivery_status == 'SUCCESSFUL'
+      end
+
+      def error
+        return nil if success?
+
+        @error ||= begin
+          status_code = message_response_result.status_code
+          delivery_status = message_response_result.delivery_status
+          exception_message = "Pinpoint Error: #{delivery_status} - #{status_code}"
+          exception_class = ERROR_HASH[delivery_status] || TelephonyError
+          exception_class.new(exception_message)
+        end
+      end
+
+      def message_response_result
+        @message_repsonse ||= pinpoint_response.message_response.result.values.first
       end
     end
   end

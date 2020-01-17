@@ -1,3 +1,5 @@
+require 'logger'
+
 module Telephony
   TwilioConfiguration = Struct.new(
     :timeout,
@@ -27,10 +29,12 @@ module Telephony
   class Configuration
     attr_writer :adapter
     attr_reader :twilio, :pinpoint
+    attr_accessor :logger
 
     # rubocop:disable Metrics/MethodLength
     def initialize
-      @adapter = :twilio
+      @adapter = :pinpoint
+      @logger = Logger.new(STDOUT)
       @twilio = TwilioConfiguration.new(
         timeout: 5,
         record_voice: false,
