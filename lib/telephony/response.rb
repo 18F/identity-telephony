@@ -11,7 +11,7 @@ module Telephony
     def errors
       return {} if error.nil?
       {
-        telephony: "#{error.class.to_s} - #{error.message}",
+        telephony: "#{error.class} - #{error.message}",
       }
     end
 

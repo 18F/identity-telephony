@@ -56,7 +56,7 @@ module Telephony
             message_id: message_response_result.message_id,
             status_code: message_response_result.status_code,
             status_message: message_response_result.status_message,
-          }
+          },
         )
       end
       # rubocop:enable Metrics/MethodLength
