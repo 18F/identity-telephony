@@ -18,5 +18,29 @@ describe Telephony::Test::SmsSender do
       expect(last_message.body).to eq(message_body)
       expect(last_message.to).to eq(phone)
     end
+
+    it 'simulates a telephony error' do
+      response = subject.send(message: 'test', to: '+1 (225) 555-1000')
+
+      last_message = Telephony::Test::Message.messages.last
+
+      expect(response.success?).to eq(false)
+      expect(response.error).to eq(Telephony::TelephonyError.new('Simulated telephony error'))
+      expect(response.extra[:request_id]).to eq('fake-message-request-id')
+      expect(last_message).to eq(nil)
+    end
+
+    it 'simulates an invalid calling area error' do
+      response = subject.send(message: 'test', to: '+1 (225) 555-2000')
+
+      last_message = Telephony::Test::Message.messages.last
+
+      expect(response.success?).to eq(false)
+      expect(response.error).to eq(
+        Telephony::InvalidCallingAreaError.new('Simulated calling area error'),
+      )
+      expect(response.extra[:request_id]).to eq('fake-message-request-id')
+      expect(last_message).to eq(nil)
+    end
   end
 end
