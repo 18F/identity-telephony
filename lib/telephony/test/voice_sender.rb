@@ -7,7 +7,9 @@ module Telephony
           Call.calls.push(Call.new(body: message, to: to))
           Response.new(success: true, extra: { request_id: 'fake-message-request-id' })
         else
-          Response.new(success: false, error: error, extra: { request_id: 'fake-message-request-id' })
+          Response.new(
+            success: false, error: error, extra: { request_id: 'fake-message-request-id' },
+          )
         end
       end
     end
