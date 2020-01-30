@@ -10,11 +10,15 @@ module Telephony
     end
 
     def send_authentication_otp
-      adapter.send(message: authentication_message, to: recipient_phone)
+      response = adapter.send(message: authentication_message, to: recipient_phone)
+      log_response(response, context: :authentication)
+      response
     end
 
     def send_confirmation_otp
-      adapter.send(message: confirmation_message, to: recipient_phone)
+      response = adapter.send(message: confirmation_message, to: recipient_phone)
+      log_response(response, context: :confirmation)
+      response
     end
 
     private
@@ -39,6 +43,16 @@ module Telephony
       end
     end
     # rubocop:enable all
+
+    def log_response(response, context:)
+      extra = {
+        adapter: Telephony.config.adapter,
+        channel: channel,
+        context: context,
+      }
+      output = response.to_h.merge(extra).to_json
+      Telephony.config.logger.info(output)
+    end
 
     def authentication_message
       I18n.t(

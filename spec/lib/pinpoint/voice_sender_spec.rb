@@ -1,5 +1,10 @@
 describe Telephony::Pinpoint::VoiceSender do
   describe '#send' do
+    let(:pinpoint_response) do
+      response = double()
+      allow(response).to receive(:message_id).and_return('fake-message-id')
+      response
+    end
     let(:pinpoint_sms_voice_client) { instance_double(Aws::PinpointSMSVoice::Client) }
     let(:message) { 'This is a test!' }
     let(:sending_phone) { '+12223334444' }
@@ -10,7 +15,7 @@ describe Telephony::Pinpoint::VoiceSender do
           plain_text_message: {
             text: message,
             language_code: 'en-US',
-            voice_id: 'Joey'
+            voice_id: 'Joey',
           },
         },
         destination_phone_number: recipient_phone,
@@ -36,9 +41,14 @@ describe Telephony::Pinpoint::VoiceSender do
     end
 
     it 'initializes a pinpoint sms and voice client and uses that to send a message' do
-      expect(pinpoint_sms_voice_client).to receive(:send_voice_message).with(expected_message)
+      expect(pinpoint_sms_voice_client).to receive(:send_voice_message).
+        with(expected_message).
+        and_return(pinpoint_response)
 
-      subject.send(message: message, to: recipient_phone)
+      response = subject.send(message: message, to: recipient_phone)
+
+      expect(response.success?).to eq(true)
+      expect(response.extra[:message_id]).to eq('fake-message-id')
     end
 
     context 'when the current locale is spanish' do
@@ -49,9 +59,14 @@ describe Telephony::Pinpoint::VoiceSender do
       it 'calls the user with a spanish voice' do
         expected_message[:content][:plain_text_message][:language_code] = 'es-US'
         expected_message[:content][:plain_text_message][:voice_id] = 'Miguel'
-        expect(pinpoint_sms_voice_client).to receive(:send_voice_message).with(expected_message)
+        expect(pinpoint_sms_voice_client).to receive(:send_voice_message).
+          with(expected_message).
+          and_return(pinpoint_response)
 
-        subject.send(message: message, to: recipient_phone)
+        response = subject.send(message: message, to: recipient_phone)
+
+        expect(response.success?).to eq(true)
+        expect(response.extra[:message_id]).to eq('fake-message-id')
       end
     end
 
@@ -63,9 +78,14 @@ describe Telephony::Pinpoint::VoiceSender do
       it 'calls the user with a french voice' do
         expected_message[:content][:plain_text_message][:language_code] = 'fr-FR'
         expected_message[:content][:plain_text_message][:voice_id] = 'Mathieu'
-        expect(pinpoint_sms_voice_client).to receive(:send_voice_message).with(expected_message)
+        expect(pinpoint_sms_voice_client).to receive(:send_voice_message).
+          with(expected_message).
+          and_return(pinpoint_response)
 
-        subject.send(message: message, to: recipient_phone)
+        response = subject.send(message: message, to: recipient_phone)
+
+        expect(response.success?).to eq(true)
+        expect(response.extra[:message_id]).to eq('fake-message-id')
       end
     end
 
@@ -77,10 +97,13 @@ describe Telephony::Pinpoint::VoiceSender do
         )
         expect(pinpoint_sms_voice_client).to receive(:send_voice_message).and_raise(exception)
 
-        expect { subject.send(message: message, to: recipient_phone) }.to raise_error(
-          Telephony::ThrottledError,
-          'Aws::PinpointSMSVoice::Errors::LimitExceededException: This is a test message',
-        )
+        response = subject.send(message: message, to: recipient_phone)
+
+        error_message =
+          'Aws::PinpointSMSVoice::Errors::LimitExceededException: This is a test message'
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::ThrottledError.new(error_message))
       end
     end
 
@@ -92,10 +115,13 @@ describe Telephony::Pinpoint::VoiceSender do
         )
         expect(pinpoint_sms_voice_client).to receive(:send_voice_message).and_raise(exception)
 
-        expect { subject.send(message: message, to: recipient_phone) }.to raise_error(
-          Telephony::TelephonyError,
-          'Aws::PinpointSMSVoice::Errors::InternalServiceErrorException: This is a test message',
-        )
+        response = subject.send(message: message, to: recipient_phone)
+
+        error_message =
+          'Aws::PinpointSMSVoice::Errors::InternalServiceErrorException: This is a test message'
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::TelephonyError.new(error_message))
       end
     end
 
@@ -107,10 +133,13 @@ describe Telephony::Pinpoint::VoiceSender do
         )
         expect(pinpoint_sms_voice_client).to receive(:send_voice_message).and_raise(exception)
 
-        expect { subject.send(message: message, to: recipient_phone) }.to raise_error(
-          Telephony::TelephonyError,
-          'Aws::PinpointSMSVoice::Errors::BadRequestException: This is a test message',
-        )
+        response = subject.send(message: message, to: recipient_phone)
+
+        error_message =
+          'Aws::PinpointSMSVoice::Errors::BadRequestException: This is a test message'
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::TelephonyError.new(error_message))
       end
     end
   end

@@ -9,6 +9,7 @@ module Telephony
           to: to,
           body: message,
         )
+        Response.new(success: true)
       rescue ::Twilio::REST::RestError => e
         handle_twilio_rest_error(e)
       rescue Faraday::TimeoutError, Faraday::ConnectionFailed => e

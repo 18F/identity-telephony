@@ -27,7 +27,10 @@ describe Telephony::Twilio::ProgrammableVoiceSender do
         expect(callback_message.repeat_count).to eq(5)
       end
 
-      subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+      result = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+
+      expect(result.success?).to eq(true)
+      expect(result.error).to eq(nil)
     end
   end
 end

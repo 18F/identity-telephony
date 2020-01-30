@@ -17,7 +17,7 @@ describe Telephony::Pinpoint::SmsSender do
         ).
         and_return(Pinpoint::MockClient.new)
 
-      subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+      response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
 
       expected_result = {
         application_id: Telephony.config.pinpoint.sms.application_id,
@@ -34,7 +34,11 @@ describe Telephony::Pinpoint::SmsSender do
           },
         },
       }
+
       expect(Pinpoint::MockClient.last_request).to eq(expected_result)
+      expect(response.success?).to eq(true)
+      expect(response.error).to eq(nil)
+      expect(response.extra[:request_id]).to eq('fake-message-request-id')
     end
   end
 end

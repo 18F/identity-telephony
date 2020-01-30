@@ -7,6 +7,8 @@ Dir[File.dirname(__FILE__) + '/support/*.rb'].sort.each { |file| require file }
 
 # Setup some default configs
 Telephony.config do |c|
+  c.logger = Logger.new(nil)
+
   c.twilio.numbers = ['12223334444', '15556667777']
   c.twilio.sid = 'fake-twilio-sid'
   c.twilio.auth_token = 'fake-twilio-auth-token'

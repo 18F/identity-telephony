@@ -24,10 +24,10 @@ shared_examples 'a twilio api client' do
 
     context 'when the phone number is invalid' do
       it 'raises an invalid phone number error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::InvalidPhoneNumberError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::InvalidPhoneNumberError.new(raised_error_message))
       end
     end
 
@@ -35,10 +35,10 @@ shared_examples 'a twilio api client' do
       let(:error_code) { 21_614 }
 
       it 'raises a SMS unsupported error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::SmsUnsupportedError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::SmsUnsupportedError.new(raised_error_message))
       end
     end
 
@@ -46,10 +46,10 @@ shared_examples 'a twilio api client' do
       let(:error_code) { 13_224 }
 
       it 'raises a voice unsupported error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::VoiceUnsupportedError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::VoiceUnsupportedError.new(raised_error_message))
       end
     end
 
@@ -57,10 +57,10 @@ shared_examples 'a twilio api client' do
       let(:error_code) { 21_215 }
 
       it 'raises a invalid calling area error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::InvalidCallingAreaError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::InvalidCallingAreaError.new(raised_error_message))
       end
     end
 
@@ -68,10 +68,10 @@ shared_examples 'a twilio api client' do
       let(:error_code) { 4_815_162_342 }
 
       it 'raises a API connection error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::ApiConnectionError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::ApiConnectionError.new(raised_error_message))
       end
     end
 
@@ -79,10 +79,10 @@ shared_examples 'a twilio api client' do
       let(:error_code) { 123 }
 
       it 'raises a generic telephony error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::TelephonyError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::TelephonyError.new(raised_error_message))
       end
     end
 
@@ -91,10 +91,10 @@ shared_examples 'a twilio api client' do
       let(:raised_error_message) { 'Faraday error: Faraday::TimeoutError - test error' }
 
       it 'raises a API connection error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::ApiConnectionError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::ApiConnectionError.new(raised_error_message))
       end
     end
 
@@ -103,10 +103,10 @@ shared_examples 'a twilio api client' do
       let(:raised_error_message) { 'Faraday error: Faraday::ConnectionFailed - test error' }
 
       it 'raises a API connection error' do
-        expect { subject.send(message: 'hello!', to: '+11234567890') }.to raise_error(
-          Telephony::ApiConnectionError,
-          raised_error_message,
-        )
+        response = subject.send(message: 'hello!', to: '+11234567890')
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::ApiConnectionError.new(raised_error_message))
       end
     end
   end
