@@ -39,7 +39,7 @@ module Telephony
       def client_configs
         @client_configs ||= Telephony.config.pinpoint.voice_configs.map do |voice_config|
           credentials = AwsCredentialBuilder.new(voice_config).call
-          args = { region: voice_config.region, retry_limit: 1 }
+          args = { region: voice_config.region, retry_limit: 0 }
           args[:credentials] = credentials unless credentials.nil?
 
           ClientConfig.new(

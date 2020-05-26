@@ -16,7 +16,7 @@ describe Telephony::Pinpoint::SmsSender do
       .with(
         region: sms_config.region,
         credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
-        retry_limit: 1,
+        retry_limit: 0,
       ).and_return(Pinpoint::MockClient.new(sms_config))
   end
 
@@ -176,7 +176,7 @@ describe Telephony::Pinpoint::SmsSender do
           .with(
             region: backup_sms_config.region,
             credentials: Aws::Credentials.new(backup_sms_config.access_key_id, backup_sms_config.secret_access_key),
-            retry_limit: 1,
+            retry_limit: 0,
           ).and_return(Pinpoint::MockClient.new(backup_sms_config))
       end
 
