@@ -17,17 +17,21 @@ Telephony.config do |c|
   c.twilio.voice_callback_encryption_key = Base64.strict_encode64('0' * 32)
   c.twilio.voice_callback_base_url = 'https://example.com/api/voice'
 
-  c.pinpoint.sms.region = 'fake-pinpoint-region-sms'
-  c.pinpoint.sms.access_key_id = 'fake-pinpoint-access-key-id-sms'
-  c.pinpoint.sms.secret_access_key = 'fake-pinpoint-secret-access-key-sms'
-  c.pinpoint.sms.application_id = 'fake-pinpoint-application-id-sms'
-  c.pinpoint.sms.shortcode = '123456'
-  c.pinpoint.sms.longcode_pool = ['+12223334444', '+15556667777']
+  c.pinpoint.add_sms_config do |sms|
+    sms.region = 'fake-pinpoint-region-sms'
+    sms.access_key_id = 'fake-pinpoint-access-key-id-sms'
+    sms.secret_access_key = 'fake-pinpoint-secret-access-key-sms'
+    sms.application_id = 'fake-pinpoint-application-id-sms'
+    sms.shortcode = '123456'
+    sms.longcode_pool = ['+12223334444', '+15556667777']
+  end
 
-  c.pinpoint.voice.region = 'fake-pinpoint-region-voice'
-  c.pinpoint.voice.access_key_id = 'fake-pinpoint-access-key-id-voice'
-  c.pinpoint.voice.secret_access_key = 'fake-pinpoint-secret-access-key-voice'
-  c.pinpoint.voice.longcode_pool = ['+12223334444', '+15556667777']
+  c.pinpoint.add_voice_config do |voice|
+    voice.region = 'fake-pinpoint-region-voice'
+    voice.access_key_id = 'fake-pinpoint-access-key-id-voice'
+    voice.secret_access_key = 'fake-pinpoint-secret-access-key-voice'
+    voice.longcode_pool = ['+12223334444', '+15556667777']
+  end
 end
 
 RSpec.configure do |config|

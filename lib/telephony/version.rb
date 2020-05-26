@@ -1,3 +1,3 @@
 module Telephony
-  VERSION = '0.0.17'.freeze
+  VERSION = '0.1.0'.freeze
 end
