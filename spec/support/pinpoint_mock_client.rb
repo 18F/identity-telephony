@@ -29,8 +29,14 @@ module Pinpoint
       :message_id,
     )
 
+    attr_reader :config
+
+    def initialize(config)
+      @config = config
+    end
+
     def send_messages(request)
-      expect(request[:application_id]).to eq(Telephony.config.pinpoint.sms.application_id)
+      expect(request[:application_id]).to eq(config.application_id)
 
       self.class.last_request = request
 

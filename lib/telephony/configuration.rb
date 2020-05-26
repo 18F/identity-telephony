@@ -29,6 +29,7 @@ module Telephony
       sms = PinpointSmsConfiguration.new(region: 'us-west-2')
       yield sms
       sms_configs << sms
+      sms
     end
 
     # Adds a new voice configuration
@@ -37,7 +38,8 @@ module Telephony
       raise "missing voice configuration block" unless block_given?
       voice = PinpointVoiceConfiguration.new(region: 'us-west-2')
       yield voice
-      voice_configs << voice_configs
+      voice_configs << voice
+      voice
     end
   end
 
