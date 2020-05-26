@@ -18,13 +18,17 @@ Telephony.config do |c|
   c.twilio.timeout = 5 # This is optional. The default is `5`
   c.twilio.record_voice = false # This is optional. The default is `false`
 
-  c.pinpoint.sms.region = 'us-west-2' # This is optional, us-west-2 is the default
-  c.pinpoint.sms.application_id = 'fake-pinpoint-application-id-sms'
-  c.pinpoint.sms.shortcode = '123456'
-  c.pinpoint.sms.longcode_pool = ['+12223334444', '+15556667777']
+  c.pinpoint.add_sms_config do |sms|
+    sms.region = 'us-west-2' # This is optional, us-west-2 is the default
+    sms.application_id = 'fake-pinpoint-application-id-sms'
+    sms.shortcode = '123456'
+    sms.longcode_pool = ['+12223334444', '+15556667777']
+  end
 
-  c.pinpoint.voice.region = 'us-west-2' # This is optional, us-west-2 is the default
-  c.pinpoint.voice.longcode_pool = ['+12223334444', '+15556667777']
+  c.pinpoint.add_voice_config do |voice|
+    voice.region = 'us-west-2' # This is optional, us-west-2 is the default
+    voice.longcode_pool = ['+12223334444', '+15556667777']
+  end
 end
 ```
 
