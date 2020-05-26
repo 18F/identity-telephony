@@ -24,7 +24,7 @@ module Telephony
             return Response.new(
               success: true,
               error: nil,
-              extra: { message_id: response.message_id }
+              extra: { message_id: response.message_id },
             )
           rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
             last_error = handle_pinpoint_error(e)
