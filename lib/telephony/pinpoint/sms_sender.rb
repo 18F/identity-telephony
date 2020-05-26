@@ -101,7 +101,7 @@ module Telephony
 
       def notify_pinpoint_failover(error)
         # TODO: log some sort of message?
-        Telephony.config.logger.warn "error region: #{error}"s
+        Telephony.config.logger.warn "error region: #{error}"
       end
     end
   end
