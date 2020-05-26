@@ -25,7 +25,7 @@ module Telephony
     # Adds a new SMS configuration
     # @yieldparam [PinpointSmsConfiguration] sms an sms configuration object configure
     def add_sms_config
-      raise "missing sms configuration block" unless block_given?
+      raise 'missing sms configuration block' unless block_given?
       sms = PinpointSmsConfiguration.new(region: 'us-west-2')
       yield sms
       sms_configs << sms
@@ -35,7 +35,7 @@ module Telephony
     # Adds a new voice configuration
     # @yieldparam [PinpointVoiceConfiguration] voice a voice configuration object configure
     def add_voice_config
-      raise "missing voice configuration block" unless block_given?
+      raise 'missing voice configuration block' unless block_given?
       voice = PinpointVoiceConfiguration.new(region: 'us-west-2')
       yield voice
       voice_configs << voice
@@ -52,7 +52,7 @@ module Telephony
     :application_id,
     :shortcode,
     *PINPOINT_CONFIGURATION_NAMES,
-    keyword_init: true
+    keyword_init: true,
   )
 
   class Configuration

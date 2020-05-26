@@ -3,17 +3,14 @@ module Telephony
     class VoiceSender
       ClientConfig = Struct.new(:client, :config)
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/MethodLength, Metrics::AbcSize
       def send(message:, to:)
         language_code, voice_id = language_code_and_voice_id
 
         last_error = nil
         client_configs.each do |client_config|
-          pinpoint_client = client_config.client
-          voice_config = client_config.config
-
           begin
-            response = pinpoint_client.send_voice_message(
+            response = client_config.client.send_voice_message(
               content: {
                 plain_text_message: {
                   text: message,
@@ -22,9 +19,13 @@ module Telephony
                 },
               },
               destination_phone_number: to,
-              origination_phone_number: voice_config.longcode_pool.sample,
+              origination_phone_number: client_config.config.longcode_pool.sample,
             )
-            return Response.new(success: true, error: nil, extra: { message_id: response.message_id })
+            return Response.new(
+              success: true,
+              error: nil,
+              extra: { message_id: response.message_id }
+            )
           rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
             last_error = handle_pinpoint_error(e)
             notify_pinpoint_failover(e)
@@ -32,7 +33,7 @@ module Telephony
         end
         last_error
       end
-      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/MethodLength, Metrics::AbcSize
 
       # @api private
       # An array of (client, config) pairs
@@ -69,7 +70,7 @@ module Telephony
 
       def notify_pinpoint_failover(error)
         # TODO: log some sort of message?
-        Telephony.config.logger.warn "error region: region"
+        Telephony.config.logger.warn "error region: #{error}"
       end
 
       def language_code_and_voice_id

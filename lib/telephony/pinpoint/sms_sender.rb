@@ -17,11 +17,8 @@ module Telephony
       def send(message:, to:)
         last_response = nil
         client_configs.each do |client_config|
-          pinpoint_client = client_config.client
-          sms_config = client_config.config
-
-          pinpoint_response = pinpoint_client.send_messages(
-            application_id: sms_config.application_id,
+          pinpoint_response = client_config.client.send_messages(
+            application_id: client_config.config.application_id,
             message_request: {
               addresses: {
                 to => {
@@ -32,7 +29,7 @@ module Telephony
                 sms_message: {
                   body: message,
                   message_type: 'TRANSACTIONAL',
-                  origination_number: sms_config.shortcode,
+                  origination_number: client_config.config.shortcode,
                 },
               },
             },
@@ -58,7 +55,7 @@ module Telephony
 
           ClientConfig.new(
             build_client(args),
-            sms_config
+            sms_config,
           )
         end
       end
@@ -104,7 +101,7 @@ module Telephony
 
       def notify_pinpoint_failover(error)
         # TODO: log some sort of message?
-        Telephony.config.logger.warn "error region: region"
+        Telephony.config.logger.warn "error region: #{error}"s
       end
     end
   end
