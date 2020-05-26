@@ -168,7 +168,6 @@ describe Telephony::Pinpoint::SmsSender do
           sms.access_key_id = 'fake-pnpoint-access-key-id-sms'
           sms.secret_access_key = 'fake-pinpoint-secret-access-key-sms'
           sms.application_id = 'backup-sms-application-id'
-          sms.longcode_pool = ['+19991112222']
         end
 
         backup_sms_config = Telephony.config.pinpoint.sms_configs.last
