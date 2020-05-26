@@ -9,27 +9,25 @@ module Telephony
 
         last_error = nil
         client_configs.each do |client_config|
-          begin
-            response = client_config.client.send_voice_message(
-              content: {
-                plain_text_message: {
-                  text: message,
-                  language_code: language_code,
-                  voice_id: voice_id,
-                },
+          response = client_config.client.send_voice_message(
+            content: {
+              plain_text_message: {
+                text: message,
+                language_code: language_code,
+                voice_id: voice_id,
               },
-              destination_phone_number: to,
-              origination_phone_number: client_config.config.longcode_pool.sample,
-            )
-            return Response.new(
-              success: true,
-              error: nil,
-              extra: { message_id: response.message_id },
-            )
-          rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
-            last_error = handle_pinpoint_error(e)
-            notify_pinpoint_failover(e)
-          end
+            },
+            destination_phone_number: to,
+            origination_phone_number: client_config.config.longcode_pool.sample,
+          )
+          return Response.new(
+            success: true,
+            error: nil,
+            extra: { message_id: response.message_id },
+          )
+        rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
+          last_error = handle_pinpoint_error(e)
+          notify_pinpoint_failover(e)
         end
         last_error
       end
