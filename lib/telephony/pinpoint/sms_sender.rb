@@ -1,3 +1,6 @@
+require 'telephony/util'
+require 'time'
+
 module Telephony
   module Pinpoint
     class SmsSender
@@ -13,10 +16,11 @@ module Telephony
         'UNKNOWN_FAILURE' => UnknownFailureError,
       }.freeze
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       def send(message:, to:)
         last_response = nil
         client_configs.each do |client_config|
+          start = Time.now
           pinpoint_response = client_config.client.send_messages(
             application_id: client_config.config.application_id,
             message_request: {
@@ -34,8 +38,8 @@ module Telephony
               },
             },
           )
-
-          response = build_response(pinpoint_response)
+          finish = Time.now
+          response = build_response(pinpoint_response, start: start, finish: finish)
           return response if response.success?
           notify_pinpoint_failover(
             error: response.error,
@@ -46,7 +50,7 @@ module Telephony
         end
         last_response
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 
       # @api private
       # An array of (client, config) pairs
@@ -72,7 +76,7 @@ module Telephony
       private
 
       # rubocop:disable Metrics/MethodLength
-      def build_response(pinpoint_response)
+      def build_response(pinpoint_response, start:, finish:)
         message_response_result = pinpoint_response.message_response.result.values.first
 
         Response.new(
@@ -84,6 +88,7 @@ module Telephony
             message_id: message_response_result.message_id,
             status_code: message_response_result.status_code,
             status_message: message_response_result.status_message,
+            duration_ms: Util.duration_ms(start: start, finish: finish),
           },
         )
       end

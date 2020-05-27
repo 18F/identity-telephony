@@ -1,14 +1,18 @@
+require 'time'
+require 'telephony/util'
+
 module Telephony
   module Pinpoint
     class VoiceSender
       ClientConfig = Struct.new(:client, :config)
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       def send(message:, to:)
         language_code, voice_id = language_code_and_voice_id
 
         last_error = nil
         client_configs.each do |client_config|
+          start = Time.now
           response = client_config.client.send_voice_message(
             content: {
               plain_text_message: {
@@ -20,22 +24,30 @@ module Telephony
             destination_phone_number: to,
             origination_phone_number: client_config.config.longcode_pool.sample,
           )
+          finish = Time.now
           return Response.new(
             success: true,
             error: nil,
-            extra: { message_id: response.message_id },
+            extra: {
+              message_id: response.message_id,
+              duration_ms: Util.duration_ms(start: start, finish: finish),
+            },
           )
         rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
+          finish = Time.now
           last_error = handle_pinpoint_error(e)
           notify_pinpoint_failover(
             error: e,
             region: client_config.config.region,
-            extra: { message_id: response&.message_id },
+            extra: {
+              message_id: response&.message_id,
+              duration_ms: Util.duration_ms(start: start, finish: finish),
+            },
           )
         end
         last_error
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 
       # @api private
       # An array of (client, config) pairs
