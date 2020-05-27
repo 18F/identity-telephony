@@ -3,7 +3,7 @@ module Telephony
     class VoiceSender
       ClientConfig = Struct.new(:client, :config)
 
-      # rubocop:disable Metrics/MethodLength, Metrics::AbcSize
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def send(message:, to:)
         language_code, voice_id = language_code_and_voice_id
 
@@ -35,7 +35,7 @@ module Telephony
         end
         last_error
       end
-      # rubocop:enable Metrics/MethodLength, Metrics::AbcSize
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       # @api private
       # An array of (client, config) pairs
@@ -76,7 +76,7 @@ module Telephony
           error: error,
           extra: extra.merge(
             failover: true,
-            region: region
+            region: region,
           ),
         )
         Telephony.config.logger.warn(response.to_h.to_json)

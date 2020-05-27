@@ -13,7 +13,7 @@ module Telephony
         'UNKNOWN_FAILURE' => UnknownFailureError,
       }.freeze
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def send(message:, to:)
         last_response = nil
         client_configs.each do |client_config|
@@ -46,7 +46,7 @@ module Telephony
         end
         last_response
       end
-      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       # @api private
       # An array of (client, config) pairs
