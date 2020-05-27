@@ -6,7 +6,7 @@ module Telephony
     class VoiceSender
       ClientConfig = Struct.new(:client, :config)
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockSize
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       def send(message:, to:)
         language_code, voice_id = language_code_and_voice_id
 
@@ -47,7 +47,7 @@ module Telephony
         end
         last_error
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockSize
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 
       # @api private
       # An array of (client, config) pairs
