@@ -5,29 +5,36 @@ require 'identity-telephony'
 
 Dir[File.dirname(__FILE__) + '/support/*.rb'].sort.each { |file| require file }
 
-# Setup some default configs
-Telephony.config do |c|
-  c.logger = Logger.new(nil)
+def use_default_config!
+  # Setup some default configs
+  Telephony.instance_variable_set(:@config, nil)
 
-  c.twilio.numbers = ['12223334444', '15556667777']
-  c.twilio.sid = 'fake-twilio-sid'
-  c.twilio.auth_token = 'fake-twilio-auth-token'
-  c.twilio.messaging_service_sid = 'fake-twilio-messaging-service-sid'
-  c.twilio.verify_api_key = 'fake-twilio-verify-api-key'
-  c.twilio.voice_callback_encryption_key = Base64.strict_encode64('0' * 32)
-  c.twilio.voice_callback_base_url = 'https://example.com/api/voice'
+  Telephony.config do |c|
+    c.logger = Logger.new(nil)
 
-  c.pinpoint.sms.region = 'fake-pinpoint-region-sms'
-  c.pinpoint.sms.access_key_id = 'fake-pinpoint-access-key-id-sms'
-  c.pinpoint.sms.secret_access_key = 'fake-pinpoint-secret-access-key-sms'
-  c.pinpoint.sms.application_id = 'fake-pinpoint-application-id-sms'
-  c.pinpoint.sms.shortcode = '123456'
-  c.pinpoint.sms.longcode_pool = ['+12223334444', '+15556667777']
+    c.twilio.numbers = ['12223334444', '15556667777']
+    c.twilio.sid = 'fake-twilio-sid'
+    c.twilio.auth_token = 'fake-twilio-auth-token'
+    c.twilio.messaging_service_sid = 'fake-twilio-messaging-service-sid'
+    c.twilio.verify_api_key = 'fake-twilio-verify-api-key'
+    c.twilio.voice_callback_encryption_key = Base64.strict_encode64('0' * 32)
+    c.twilio.voice_callback_base_url = 'https://example.com/api/voice'
 
-  c.pinpoint.voice.region = 'fake-pinpoint-region-voice'
-  c.pinpoint.voice.access_key_id = 'fake-pinpoint-access-key-id-voice'
-  c.pinpoint.voice.secret_access_key = 'fake-pinpoint-secret-access-key-voice'
-  c.pinpoint.voice.longcode_pool = ['+12223334444', '+15556667777']
+    c.pinpoint.add_sms_config do |sms|
+      sms.region = 'fake-pinpoint-region-sms'
+      sms.access_key_id = 'fake-pnpoint-access-key-id-sms'
+      sms.secret_access_key = 'fake-pinpoint-secret-access-key-sms'
+      sms.application_id = 'fake-pinpoint-application-id-sms'
+      sms.shortcode = '123456'
+    end
+
+    c.pinpoint.add_voice_config do |voice|
+      voice.region = 'fake-pinpoint-region-voice'
+      voice.access_key_id = 'fake-pinpoint-access-key-id-voice'
+      voice.secret_access_key = 'fake-pinpoint-secret-access-key-voice'
+      voice.longcode_pool = ['+12223334444', '+15556667777']
+    end
+  end
 end
 
 RSpec.configure do |config|
@@ -43,6 +50,8 @@ RSpec.configure do |config|
 
   config.before(:each) do
     Pinpoint::MockClient.reset!
+
+    use_default_config!
   end
 end
 

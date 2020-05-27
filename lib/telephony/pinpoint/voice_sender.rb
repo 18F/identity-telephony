@@ -1,34 +1,59 @@
 module Telephony
   module Pinpoint
     class VoiceSender
-      # rubocop:disable Metrics/MethodLength
+      ClientConfig = Struct.new(:client, :config)
+
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def send(message:, to:)
         language_code, voice_id = language_code_and_voice_id
-        response = pinpoint_client.send_voice_message(
-          content: {
-            plain_text_message: {
-              text: message,
-              language_code: language_code,
-              voice_id: voice_id,
+
+        last_error = nil
+        client_configs.each do |client_config|
+          response = client_config.client.send_voice_message(
+            content: {
+              plain_text_message: {
+                text: message,
+                language_code: language_code,
+                voice_id: voice_id,
+              },
             },
-          },
-          destination_phone_number: to,
-          origination_phone_number: Telephony.config.pinpoint.voice.longcode_pool.sample,
-        )
-        Response.new(success: true, error: nil, extra: { message_id: response.message_id })
-      rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
-        handle_pinpoint_error(e)
+            destination_phone_number: to,
+            origination_phone_number: client_config.config.longcode_pool.sample,
+          )
+          return Response.new(
+            success: true,
+            error: nil,
+            extra: { message_id: response.message_id },
+          )
+        rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
+          last_error = handle_pinpoint_error(e)
+          notify_pinpoint_failover(
+            error: e,
+            region: client_config.config.region,
+            extra: { message_id: response&.message_id },
+          )
+        end
+        last_error
       end
-      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+      # @api private
+      # An array of (client, config) pairs
+      # @return [Array<ClientConfig>]
+      def client_configs
+        @client_configs ||= Telephony.config.pinpoint.voice_configs.map do |voice_config|
+          credentials = AwsCredentialBuilder.new(voice_config).call
+          args = { region: voice_config.region, retry_limit: 0 }
+          args[:credentials] = credentials unless credentials.nil?
+
+          ClientConfig.new(
+            Aws::PinpointSMSVoice::Client.new(args),
+            voice_config,
+          )
+        end
+      end
 
       private
-
-      def pinpoint_client
-        credentials = AwsCredentialBuilder.new(:voice).call
-        args = { region: Telephony.config.pinpoint.voice.region, retry_limit: 1 }
-        args[:credentials] = credentials unless credentials.nil?
-        @pinpoint_client ||= Aws::PinpointSMSVoice::Client.new(args)
-      end
 
       def handle_pinpoint_error(err)
         request_id = err.context&.metadata&.fetch(:request_id, nil)
@@ -43,6 +68,18 @@ module Telephony
         Response.new(
           success: false, error: error_class.new(error_message), extra: { request_id: request_id },
         )
+      end
+
+      def notify_pinpoint_failover(error:, region:, extra:)
+        response = Response.new(
+          success: false,
+          error: error,
+          extra: extra.merge(
+            failover: true,
+            region: region,
+          ),
+        )
+        Telephony.config.logger.warn(response.to_h.to_json)
       end
 
       def language_code_and_voice_id

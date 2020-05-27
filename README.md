@@ -18,27 +18,31 @@ Telephony.config do |c|
   c.twilio.timeout = 5 # This is optional. The default is `5`
   c.twilio.record_voice = false # This is optional. The default is `false`
 
-  c.pinpoint.sms.region = 'us-west-2' # This is optional, us-west-2 is the default
-  c.pinpoint.sms.application_id = 'fake-pinpoint-application-id-sms'
-  c.pinpoint.sms.shortcode = '123456'
-  c.pinpoint.sms.longcode_pool = ['+12223334444', '+15556667777']
+  c.pinpoint.add_sms_config do |sms|
+    sms.region = 'us-west-2' # This is optional, us-west-2 is the default
+    sms.application_id = 'fake-pinpoint-application-id-sms'
+    sms.shortcode = '123456'
+  end
 
-  c.pinpoint.voice.region = 'us-west-2' # This is optional, us-west-2 is the default
-  c.pinpoint.voice.longcode_pool = ['+12223334444', '+15556667777']
+  c.pinpoint.add_voice_config do |voice|
+    voice.region = 'us-west-2' # This is optional, us-west-2 is the default
+    voice.longcode_pool = ['+12223334444', '+15556667777']
+  end
 end
 ```
 
 # Error handling
 
-If the gem encounters a problem it will raise an instance of `Telephony::TelephonyError`.
+If the gem encounters a problem return a `Response` object with `success?` false and an `error` property.
 This object can be used to render an error to the user like so:
 
 ```ruby
 
 def create
-  Telephony.end_authentication_otp(to: to, otp: otp, expiration: expiration, channel: :sms)
-rescue Telephony::TelephonyError => err
-  flash[:error] = error.friendly_message
+  response = Telephony.end_authentication_otp(to: to, otp: otp, expiration: expiration, channel: :sms)
+  return if response.success?
+
+  flash[:error] = response.error.friendly_message
   render :new
 end
 ```
