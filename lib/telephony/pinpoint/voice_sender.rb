@@ -27,7 +27,11 @@ module Telephony
           )
         rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
           last_error = handle_pinpoint_error(e)
-          notify_pinpoint_failover(e)
+          notify_pinpoint_failover(
+            error: e,
+            region: client_config.config.region,
+            extra: { message_id: response&.message_id },
+          )
         end
         last_error
       end
@@ -66,9 +70,16 @@ module Telephony
         )
       end
 
-      def notify_pinpoint_failover(error)
-        # TODO: log some sort of message?
-        Telephony.config.logger.warn "error region: #{error}"
+      def notify_pinpoint_failover(error:, region:, extra:)
+        response = Response.new(
+          success: false,
+          error: error,
+          extra: extra.merge(
+            failover: true,
+            region: region
+          ),
+        )
+        Telephony.config.logger.warn(response.to_h.to_json)
       end
 
       def language_code_and_voice_id

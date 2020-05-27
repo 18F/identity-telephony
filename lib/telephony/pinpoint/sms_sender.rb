@@ -37,7 +37,11 @@ module Telephony
 
           response = build_response(pinpoint_response)
           return response if response.success?
-          notify_pinpoint_failover(response.error)
+          notify_pinpoint_failover(
+            error: response.error,
+            region: client_config.config.region,
+            extra: response.extra,
+          )
           last_response = response
         end
         last_response
@@ -99,9 +103,16 @@ module Telephony
         exception_class.new(exception_message)
       end
 
-      def notify_pinpoint_failover(error)
-        # TODO: log some sort of message?
-        Telephony.config.logger.warn "error region: #{error}"
+      def notify_pinpoint_failover(error:, region:, extra:)
+        response = Response.new(
+          success: false,
+          error: error,
+          extra: extra.merge(
+            failover: true,
+            region: region,
+          ),
+        )
+        Telephony.config.logger.warn(response.to_h.to_json)
       end
     end
   end
