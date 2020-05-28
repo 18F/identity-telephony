@@ -15,6 +15,7 @@ describe Telephony::Test::SmsSender do
       expect(response.success?).to eq(true)
       expect(response.error).to eq(nil)
       expect(response.extra[:request_id]).to eq('fake-message-request-id')
+      expect(response.extra[:message_id]).to eq('fake-message-id')
       expect(last_message.body).to eq(message_body)
       expect(last_message.to).to eq(phone)
     end
