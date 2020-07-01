@@ -9,7 +9,7 @@ en:
     confirmation_otp:
       sms: Enter %{code} in login.gov to confirm your phone number. This security code will expire in %{expiration} minutes.
       voice: Hello! Your login.gov one time passcode is, %{code}, again, your passcode is, %{code}. This code expires in %{expiration} minutes.
-    doc_auth_link: 'You''ve requested to verify your identity on a mobile phone.  Please take a photo of your state issued ID: %{link}'
+    doc_auth_link: "%{link} You've requested to verify your identity on a mobile phone.  Please take a photo of your state issued ID."
     error:
       friendly_message:
         api_connection: The server took too long to respond. Please try again.<br><br>The text messaging service may be having trouble. You can check the status with <a href="https://status.twilio.com/" target='_blank'>our messaging service provider</a>.
