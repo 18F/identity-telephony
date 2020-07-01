@@ -1,5 +1,7 @@
 module Telephony
   class AlertSender
+    SMS_MAX_LENGTH = 160
+
     def send_account_reset_notice(to:, cancel_link:)
       message = I18n.t('telephony.account_reset_notice', cancel_link: cancel_link)
       response = adapter.send(message: message, to: to)
@@ -17,7 +19,11 @@ module Telephony
     def send_doc_auth_link(to:, link:)
       message = I18n.t('telephony.doc_auth_link', link: link)
       response = adapter.send(message: message, to: to)
-      log_response(response, context: __method__.to_s.gsub(/^send_/, ''))
+      context = __method__.to_s.gsub(/^send_/, '')
+      if link.length > SMS_MAX_LENGTH
+        log_warning("link longer than #{SMS_MAX_LENGTH} characters", context: context)
+      end
+      log_response(response, context: context)
       response
     end
 
@@ -77,6 +83,15 @@ module Telephony
       }
       output = response.to_h.merge(extra).to_json
       Telephony.config.logger.info(output)
+    end
+
+    def log_warning(alert, context:)
+      Telephony.config.logger.warn({
+        alert: alert,
+        adapter: Telephony.config.adapter,
+        channel: :sms,
+        context: context,
+      }.to_json)
     end
   end
 end

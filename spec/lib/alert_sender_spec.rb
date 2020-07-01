@@ -30,12 +30,44 @@ describe Telephony::AlertSender do
   end
 
   describe 'send_doc_auth_link' do
+    let(:link) do
+      'https://idp.int.identitysandbox.com/verify/capture-doc/mobile-front-image?token=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+    end
+
     it 'sends the correct message' do
-      subject.send_doc_auth_link(to: recipient, link: 'example.com')
+      subject.send_doc_auth_link(to: recipient, link: link)
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
-      expect(last_message.body).to eq(I18n.t('telephony.doc_auth_link', link: 'example.com'))
+      expect(last_message.body).to eq(I18n.t('telephony.doc_auth_link', link: link))
+    end
+
+    ['en', 'es', 'fr'].each do |locale|
+      context "in locale #{locale}" do
+        around do |ex|
+          orig_locale = I18n.locale
+          I18n.locale = locale
+          ex.run
+        ensure
+          I18n.locale = orig_locale
+        end
+
+        it 'puts the URL in the first 160 characters, so it stays within a single SMS message' do
+          subject.send_doc_auth_link(to: recipient, link: link)
+
+          last_message = Telephony::Test::Message.messages.last
+          first160 = last_message.body[0...160]
+          expect(first160).to include(link)
+        end
+      end
+    end
+
+    it 'warns if the link is longer than 160 characters' do
+      long_link = 'a' * 161
+
+      expect(Telephony.config.logger).to receive(:warn)
+
+      subject.send_doc_auth_link(to: recipient, link: long_link)
     end
   end
 

@@ -9,7 +9,7 @@ fr:
     confirmation_otp:
       sms: Entrez %{code} dans login.gov pour confirmer votre numéro de téléphone. Ce code de sécurité expirera dans %{expiration} minutes.
       voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est, %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera dans %{expiration} minutes.
-    doc_auth_link: 'Vous avez demandé à vérifier votre identité sur un téléphone mobile. S''il vous plaît prendre une photo de votre identité émise par l''état: %{link}'
+    doc_auth_link: "%{link} Vous avez demandé à vérifier votre identité sur un téléphone mobile. S'il vous plaît prendre une photo de votre identité émise par l'état"
     error:
       friendly_message:
         api_connection: Le serveur a mis trop de temps à répondre. Veuillez réessayer. Le service de messagerie texte peut avoir des problèmes. Vous pouvez vérifier le statut avec <a href="https://status.twilio.com/" target='_blank'>notre fournisseur de service de messages</a>.

@@ -9,7 +9,7 @@ es:
     confirmation_otp:
       sms: Ingrese %{code} en login.gov para confirmar su número de teléfono. Este código de seguridad caducará en %{expiration} minutos.
       voice: "¡Hola! Su código de acceso de login.gov es, %{code}, nuevamente, su código de acceso es %{code}. Este código caducará en %{expiration} minutos."
-    doc_auth_link: 'Has solicitado verificar tu identidad en un teléfono móvil. Por favor, tome una foto de la identificación emitida por su estado: %{link}'
+    doc_auth_link: "%{link} Has solicitado verificar tu identidad en un teléfono móvil. Por favor, tome una foto de la identificación emitida por su estado"
     error:
       friendly_message:
         api_connection: El servidor tardó demasiado en responder. Vuelve a intentarlo.<br><br>El servicio de mensajes de texto puede estar teniendo problemas. Puede consultar el estado con <a href="https://status.twilio.com/" target='_blank'>nuestro proveedor de servicios de mensajes</a>.
