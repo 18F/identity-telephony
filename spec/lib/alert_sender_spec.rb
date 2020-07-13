@@ -9,12 +9,12 @@ describe Telephony::AlertSender do
 
   describe 'send_account_reset_notice' do
     it 'sends the correct message' do
-      subject.send_account_reset_notice(to: recipient, cancel_link: 'example.com')
+      subject.send_account_reset_notice(to: recipient)
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
       expect(last_message.body).to eq(
-        I18n.t('telephony.account_reset_notice', cancel_link: 'example.com'),
+        I18n.t('telephony.account_reset_notice'),
       )
     end
   end

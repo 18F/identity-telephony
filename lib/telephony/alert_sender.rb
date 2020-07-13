@@ -2,8 +2,8 @@ module Telephony
   class AlertSender
     SMS_MAX_LENGTH = 160
 
-    def send_account_reset_notice(to:, cancel_link:)
-      message = I18n.t('telephony.account_reset_notice', cancel_link: cancel_link)
+    def send_account_reset_notice(to:)
+      message = I18n.t('telephony.account_reset_notice')
       response = adapter.send(message: message, to: to)
       log_response(response, context: __method__.to_s.gsub(/^send_/, ''))
       response
