@@ -1,5 +1,3 @@
-require 'typhoeus/adapters/faraday'
-
 module Telephony
   module Twilio
     class ProgrammableApiClient
@@ -16,7 +14,7 @@ module Telephony
       def http_client
         @http_client ||= begin
           client = ::Twilio::HTTP::Client.new(timeout: Telephony.config.twilio.timeout.to_i)
-          client.adapter = :typhoeus
+          client.adapter = :net_http
           client
         end
       end
