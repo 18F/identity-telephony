@@ -29,7 +29,6 @@ Gem::Specification.new do |s|
   s.add_dependency('aws-sdk-pinpointsmsvoice')
   s.add_dependency('i18n')
   s.add_dependency('twilio-ruby')
-  s.add_dependency('typhoeus')
 
   s.add_development_dependency('i18n-tasks')
   s.add_development_dependency('irb')
