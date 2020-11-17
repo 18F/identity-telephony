@@ -14,7 +14,7 @@ describe Telephony::OtpSender do
       let(:channel) { :sms }
 
       it 'sends an authentication OTP with Pinpoint SMS' do
-        message = 'Enter 123456 in login.gov to continue signing in to your account. This security code will expire in 5 minutes.'
+        message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone."
 
         adapter = instance_double(Telephony::Pinpoint::SmsSender)
         expect(adapter).to receive(:send).with(message: message, to: to)
@@ -24,7 +24,7 @@ describe Telephony::OtpSender do
       end
 
       it 'sends a confirmation OTP with Pinpoint SMS' do
-        message = 'Enter 123456 in login.gov to confirm your phone number. This security code will expire in 5 minutes.'
+        message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone."
 
         adapter = instance_double(Telephony::Pinpoint::SmsSender)
         expect(adapter).to receive(:send).with(message: message, to: to)
