@@ -12,14 +12,6 @@ def use_default_config!
   Telephony.config do |c|
     c.logger = Logger.new(nil)
 
-    c.twilio.numbers = ['12223334444', '15556667777']
-    c.twilio.sid = 'fake-twilio-sid'
-    c.twilio.auth_token = 'fake-twilio-auth-token'
-    c.twilio.messaging_service_sid = 'fake-twilio-messaging-service-sid'
-    c.twilio.verify_api_key = 'fake-twilio-verify-api-key'
-    c.twilio.voice_callback_encryption_key = Base64.strict_encode64('0' * 32)
-    c.twilio.voice_callback_base_url = 'https://example.com/api/voice'
-
     c.pinpoint.add_sms_config do |sms|
       sms.region = 'fake-pinpoint-region-sms'
       sms.access_key_id = 'fake-pnpoint-access-key-id-sms'

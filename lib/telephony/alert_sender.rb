@@ -66,8 +66,6 @@ module Telephony
 
     def adapter
       case Telephony.config.adapter
-      when :twilio
-        Twilio::ProgrammableSmsSender.new
       when :pinpoint
         Pinpoint::SmsSender.new
       when :test

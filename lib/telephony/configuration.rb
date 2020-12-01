@@ -1,19 +1,6 @@
 require 'logger'
 
 module Telephony
-  TwilioConfiguration = Struct.new(
-    :timeout,
-    :numbers,
-    :sid,
-    :auth_token,
-    :messaging_service_sid,
-    :record_voice,
-    :verify_api_key,
-    :voice_callback_encryption_key,
-    :voice_callback_base_url,
-    keyword_init: true,
-  )
-
   class PinpointConfiguration
     attr_reader :sms_configs, :voice_configs
 
@@ -61,17 +48,13 @@ module Telephony
 
   class Configuration
     attr_writer :adapter
-    attr_reader :twilio, :pinpoint
+    attr_reader :pinpoint
     attr_accessor :logger
 
     # rubocop:disable Metrics/MethodLength
     def initialize
       @adapter = :pinpoint
       @logger = Logger.new(STDOUT)
-      @twilio = TwilioConfiguration.new(
-        timeout: 5,
-        record_voice: false,
-      )
       @pinpoint = PinpointConfiguration.new
     end
     # rubocop:enable Metrics/MethodLength

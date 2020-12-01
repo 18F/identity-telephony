@@ -26,10 +26,6 @@ module Telephony
     # rubocop:disable all
     def adapter
       case [Telephony.config.adapter, channel.to_sym]
-      when [:twilio, :sms]
-        Twilio::ProgrammableSmsSender.new
-      when [:twilio, :voice]
-        Twilio::ProgrammableVoiceSender.new
       when [:pinpoint, :sms]
         Pinpoint::SmsSender.new
       when [:pinpoint, :voice]

@@ -121,21 +121,6 @@ describe Telephony::AlertSender do
     end
   end
 
-  context 'with the twilio adapter enabled' do
-    let(:configured_adapter) { :twilio }
-
-    it 'uses the twilio adapter to send messages' do
-      adapter = instance_double(Telephony::Twilio::ProgrammableSmsSender)
-      expect(adapter).to receive(:send).with(
-        message: I18n.t('telephony.join_keyword_response'),
-        to: recipient,
-      )
-      expect(Telephony::Twilio::ProgrammableSmsSender).to receive(:new).and_return(adapter)
-
-      subject.send_join_keyword_response(to: recipient)
-    end
-  end
-
   context 'with the pinpoint adapter enabled' do
     let(:configured_adapter) { :pinpoint }
 
