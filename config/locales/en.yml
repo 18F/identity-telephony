@@ -12,7 +12,6 @@ en:
     doc_auth_link: "%{link} You've requested to verify your identity on a mobile phone.  Please take a photo of your state issued ID."
     error:
       friendly_message:
-        api_connection: The server took too long to respond. Please try again.<br><br>The text messaging service may be having trouble. You can check the status with <a href="https://status.twilio.com/" target='_blank'>our messaging service provider</a>.
         duplicate_endpoint: The phone number entered is not valid.
         generic: Your security code failed to send.
         invalid_calling_area: Calls to that phone number are not supported. Please try SMS if you have an SMS-capable phone.
@@ -30,6 +29,3 @@ en:
     personal_key_regeneration_notice: A new personal key has been issued for your login.gov account. If this wasn’t you, reset your password.
     personal_key_sign_in_notice: Your personal key was just used to sign into your login.gov account. If this wasn’t you, reset your password.
     stop_keyword_response: You've unsubscribed from login.gov alerts. You will no longer receive alerts unless you resubscribe by using this phone number to sign in or set up an account. Reply HELP for help or see www.login.gov/help.
-    twilio:
-      programmable_voice:
-        repeat_message: Press 1 to repeat this message.

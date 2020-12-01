@@ -12,13 +12,6 @@ module Telephony
     end
   end
 
-  class ApiConnectionError < TelephonyError
-    def friendly_error_message_key
-      # i18n-tasks-use t('telephony.error.friendly_message.api_connection')
-      'telephony.error.friendly_message.api_connection'
-    end
-  end
-
   class InvalidPhoneNumberError < TelephonyError
     def friendly_error_message_key
       # i18n-tasks-use t('telephony.error.friendly_message.invalid_phone_number')

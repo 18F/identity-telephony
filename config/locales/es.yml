@@ -12,7 +12,6 @@ es:
     doc_auth_link: "%{link} Has solicitado verificar tu identidad en un teléfono móvil. Por favor, tome una foto de la identificación emitida por su estado"
     error:
       friendly_message:
-        api_connection: El servidor tardó demasiado en responder. Vuelve a intentarlo.<br><br>El servicio de mensajes de texto puede estar teniendo problemas. Puede consultar el estado con <a href="https://status.twilio.com/" target='_blank'>nuestro proveedor de servicios de mensajes</a>.
         duplicate_endpoint: El número de teléfono ingresado no es válido.
         generic: Se produjo un error al enviar el código de seguridad.
         invalid_calling_area: No se admiten llamadas a ese número de teléfono. Intenta enviar un SMS si tienes un teléfono que permita enviar SMS.
@@ -30,6 +29,3 @@ es:
     personal_key_regeneration_notice: Se ha emitido una nueva clave personal para tu cuenta login.gov. Si no eres tú, restablece tu contraseña.
     personal_key_sign_in_notice: Su clave personal solo se utilizó para iniciar sesión en su cuenta login.gov. Si no fue así, reinicie su contraseña.
     stop_keyword_response: Ha cancelado la suscripción a las alertas de login.gov. Ya no recibirá alertas a menos que vuelva a suscribirse utilizando este número de teléfono para iniciar sesión o configurar una cuenta. Responda HELP para obtener ayuda o visite www.login.gov/help.
-    twilio:
-      programmable_voice:
-        repeat_message: Presione 1 para repetir este mensaje.
