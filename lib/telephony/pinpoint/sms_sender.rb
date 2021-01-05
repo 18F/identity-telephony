@@ -18,7 +18,7 @@ module Telephony
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       def send(message:, to:)
-        last_response = nil
+        response = nil
         client_configs.each do |client_config|
           start = Time.now
           pinpoint_response = client_config.client.send_messages(
@@ -46,9 +46,18 @@ module Telephony
             region: client_config.config.region,
             extra: response.extra,
           )
-          last_response = response
+        rescue Seahorse::Client::NetworkingError => e
+          finish = Time.now
+          response = handle_pinpoint_error(e)
+          notify_pinpoint_failover(
+            error: e,
+            region: client_config.config.region,
+            extra: {
+              duration_ms: Util.duration_ms(start: start, finish: finish),
+            },
+          )
         end
-        last_response
+        response
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 
@@ -74,6 +83,14 @@ module Telephony
       end
 
       private
+
+      def handle_pinpoint_error(err)
+        error_message = "#{err.class}: #{err.message}"
+
+        Response.new(
+          success: false, error: Telephony::TelephonyError.new(error_message),
+        )
+      end
 
       # rubocop:disable Metrics/MethodLength
       def build_response(pinpoint_response, start:, finish:)

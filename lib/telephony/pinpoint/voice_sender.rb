@@ -33,7 +33,7 @@ module Telephony
               duration_ms: Util.duration_ms(start: start, finish: finish),
             },
           )
-        rescue Aws::PinpointSMSVoice::Errors::ServiceError => e
+        rescue Aws::PinpointSMSVoice::Errors::ServiceError, Seahorse::Client::NetworkingError => e
           finish = Time.now
           last_error = handle_pinpoint_error(e)
           notify_pinpoint_failover(
@@ -68,7 +68,9 @@ module Telephony
       private
 
       def handle_pinpoint_error(err)
-        request_id = err.context&.metadata&.fetch(:request_id, nil)
+        request_id = if err.is_a?(Aws::PinpointSMSVoice::Errors::ServiceError)
+                       err&.context&.metadata&.fetch(:request_id, nil)
+                     end
 
         error_message = "#{err.class}: #{err.message}"
         error_class = if err.is_a? Aws::PinpointSMSVoice::Errors::LimitExceededException
