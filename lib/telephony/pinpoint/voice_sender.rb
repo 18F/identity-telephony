@@ -13,6 +13,9 @@ module Telephony
         last_error = nil
         client_configs.each do |client_config|
           start = Time.now
+          if rand() > 0.3
+            raise Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)
+          end
           response = client_config.client.send_voice_message(
             content: {
               plain_text_message: {

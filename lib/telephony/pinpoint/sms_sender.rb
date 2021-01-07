@@ -21,6 +21,9 @@ module Telephony
         response = nil
         client_configs.each do |client_config|
           start = Time.now
+          if rand() > 0.3
+            raise Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)
+          end
           pinpoint_response = client_config.client.send_messages(
             application_id: client_config.config.application_id,
             message_request: {
