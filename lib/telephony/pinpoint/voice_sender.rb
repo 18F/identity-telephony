@@ -91,6 +91,7 @@ module Telephony
           extra: extra.merge(
             failover: true,
             region: region,
+            channel: 'voice',
           ),
         )
         Telephony.config.logger.warn(response.to_h.to_json)
