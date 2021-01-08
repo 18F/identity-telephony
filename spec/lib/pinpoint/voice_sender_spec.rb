@@ -135,6 +135,21 @@ describe Telephony::Pinpoint::VoiceSender do
       end
     end
 
+    context 'when pinpoint raises a timeout exception' do
+      it 'rescues the exception and returns an error' do
+        exception = Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)
+        expect(voice_sender.client_configs.first.client).
+          to receive(:send_voice_message).and_raise(exception)
+
+        response = voice_sender.send(message: message, to: recipient_phone)
+
+        error_message = 'Seahorse::Client::NetworkingError: Net::ReadTimeout'
+
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::TelephonyError.new(error_message))
+      end
+    end
+
     context 'with multiple voice configs' do
       before do
         Telephony.config.pinpoint.add_voice_config do |voice|
