@@ -11,16 +11,16 @@ describe Telephony::Pinpoint::SmsSender do
     end
   end
 
-  before do
-    expect(sms_sender).to receive(:build_client)
-      .with(
-        region: sms_config.region,
-        credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
-        retry_limit: 0,
-      ).and_return(mock_client)
-  end
-
   describe 'error handling' do
+    before do
+      expect(sms_sender).to receive(:build_client)
+        .with(
+          region: sms_config.region,
+          credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
+          retry_limit: 0,
+        ).and_return(mock_client)
+    end
+
     let(:status_code) { 400 }
     let(:delivery_status) { 'DUPLICATE' }
     let(:raised_error_message) { "Pinpoint Error: #{delivery_status} - #{status_code}" }
@@ -149,6 +149,15 @@ describe Telephony::Pinpoint::SmsSender do
   end
 
   describe '#send' do
+    before do
+      expect(sms_sender).to receive(:build_client)
+        .with(
+          region: sms_config.region,
+          credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
+          retry_limit: 0,
+        ).and_return(mock_client)
+    end
+
     it 'initializes a pinpoint client and uses that to send a message with a shortcode' do
       response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
 
@@ -229,6 +238,59 @@ describe Telephony::Pinpoint::SmsSender do
           expect(response.success?).to eq(false)
           expect(response.error).to eq(Telephony::TelephonyError.new(raised_error_message))
         end
+      end
+    end
+  end
+
+  describe '#voip_phone?' do
+    let(:phone_number) { '+18888675309' }
+    let(:pinpoint_client) { Aws::Pinpoint::Client.new(stub_responses: true) }
+
+    subject(:voip_phone?) do
+      sms_sender.voip_phone?(phone_number)
+    end
+
+    before do
+      expect(sms_sender).to receive(:client_configs).and_return([
+        Telephony::Pinpoint::SmsSender::ClientConfig.new(
+          pinpoint_client, OpenStruct.new(region: 'us-north-5'),
+        ),
+        Telephony::Pinpoint::SmsSender::ClientConfig.new(
+          pinpoint_client, OpenStruct.new(region: 'us-south-1'),
+        ),
+      ])
+    end
+
+    context 'successful network requests' do
+      before do
+        pinpoint_client.stub_responses(:phone_number_validate, number_validate_response: { phone_type: phone_type })
+      end
+
+      context 'when the phone number is a mobile number' do
+        let(:phone_type) { 'MOBILE' }
+        it { is_expected.to eq(false) }
+      end
+
+      context 'when the phone number is a voip number' do
+        let(:phone_type) { 'VOIP' }
+        it { is_expected.to eq(true) }
+      end
+    end
+
+    context 'when the first config raises a timeout exception' do
+      let(:phone_type) { 'VOIP' }
+
+      before do
+        pinpoint_client.stub_responses(:phone_number_validate, [
+          Seahorse::Client::NetworkingError.new(Timeout::Error.new),
+          { number_validate_response: { phone_type: phone_type } },
+        ])
+      end
+
+      it 'logs a warning for each failure and tries the other configs' do
+        expect(Telephony.config.logger).to receive(:warn).exactly(1).times
+
+        expect(voip_phone?).to eq(true)
       end
     end
   end

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    identity-telephony (0.1.5)
+    identity-telephony (0.1.9)
       aws-sdk-pinpoint
       aws-sdk-pinpointsmsvoice
       i18n
@@ -32,20 +32,20 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     ast (2.4.0)
     aws-eventstream (1.1.0)
-    aws-partitions (1.322.0)
-    aws-sdk-core (3.97.0)
+    aws-partitions (1.416.0)
+    aws-sdk-core (3.111.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-pinpoint (1.40.0)
-      aws-sdk-core (~> 3, >= 3.71.0)
+    aws-sdk-pinpoint (1.47.0)
+      aws-sdk-core (~> 3, >= 3.109.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-pinpointsmsvoice (1.16.0)
-      aws-sdk-core (~> 3, >= 3.71.0)
+    aws-sdk-pinpointsmsvoice (1.21.0)
+      aws-sdk-core (~> 3, >= 3.109.0)
       aws-sigv4 (~> 1.1)
-    aws-sigv4 (1.1.4)
-      aws-eventstream (~> 1.0, >= 1.0.2)
+    aws-sigv4 (1.2.2)
+      aws-eventstream (~> 1, >= 1.0.2)
     builder (3.2.4)
     byebug (11.0.1)
     coderay (1.1.2)

@@ -17,6 +17,7 @@ module Telephony
       }.freeze
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
+      # @return [Response]
       def send(message:, to:)
         response = nil
         client_configs.each do |client_config|
@@ -60,6 +61,26 @@ module Telephony
         response
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
+
+
+      def voip_phone?(phone_number)
+        response = nil
+
+        client_configs.each do |client_config|
+          response = client_config.client.phone_number_validate(
+            number_validate_request: { phone_number: phone_number }
+          )
+          break if response
+        rescue Seahorse::Client::NetworkingError => e
+          notify_pinpoint_failover(
+            error: e,
+            region: client_config.config.region,
+            extra: {},
+          )
+        end
+
+        response&.number_validate_response&.phone_type == 'VOIP'
+      end
 
       # @api private
       # An array of (client, config) pairs

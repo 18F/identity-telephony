@@ -13,6 +13,10 @@ module Telephony
         end
       end
 
+      def voip_phone?(phone_number)
+        !!ErrorSimulator.new.error_for_number(phone_number)
+      end
+
       def success_response
         Response.new(
           success: true,
