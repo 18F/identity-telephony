@@ -3,6 +3,8 @@ describe Telephony::Test::SmsSender do
     Telephony::Test::Message.clear_messages
   end
 
+  subject(:sms_sender) {Telephony::Test::SmsSender.new }
+
   describe '#send' do
     it 'adds the message to the message stack' do
       message_body = 'This is a test'
@@ -42,6 +44,20 @@ describe Telephony::Test::SmsSender do
       )
       expect(response.extra[:request_id]).to eq('fake-message-request-id')
       expect(last_message).to eq(nil)
+    end
+  end
+
+  describe '#phone_type' do
+    subject(:phone_type) { sms_sender.phone_type(phone_number) }
+
+    context 'with a phone number that does not generate errors' do
+      let(:phone_number) { '+18888675309' }
+      it { is_expected.to eq(:mobile) }
+    end
+
+    context 'with a phone number that generates errors' do
+      let(:phone_number) { '+12255551000' }
+      it { is_expected.to eq(:unknown) }
     end
   end
 end

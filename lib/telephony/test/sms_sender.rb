@@ -13,6 +13,17 @@ module Telephony
         end
       end
 
+      def phone_type(phone_number)
+        case ErrorSimulator.new.error_for_number(phone_number)
+        when TelephonyError
+          :unknown
+        when InvalidCallingAreaError
+          :voip
+        else
+          :mobile
+        end
+      end
+
       def success_response
         Response.new(
           success: true,

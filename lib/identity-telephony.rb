@@ -50,10 +50,26 @@ module Telephony
     AlertSender.new
   end
 
-  def_delegators :alert_sender, :send_doc_auth_link,
+  def_delegators :alert_sender,
+                 :send_doc_auth_link,
                  :send_personal_key_regeneration_notice,
-                 :send_personal_key_sign_in_notice, :send_join_keyword_response,
-                 :send_stop_keyword_response, :send_help_keyword_response,
+                 :send_personal_key_sign_in_notice,
+                 :send_join_keyword_response,
+                 :send_stop_keyword_response,
+                 :send_help_keyword_response,
                  :send_account_reset_notice,
                  :send_account_reset_cancellation_notice
+
+  # @param [String] phone_number phone number in E.164 format
+  # @return [Symbol] returns `:mobile`, `:landline`, `:voip` or `:unknown` if there was an error
+  def self.phone_type(phone_number)
+    sender = case Telephony.config.adapter
+    when :pinpoint
+      Pinpoint::SmsSender.new
+    when :test
+      Test::SmsSender.new
+    end
+
+    sender.phone_type(phone_number)
+  end
 end
