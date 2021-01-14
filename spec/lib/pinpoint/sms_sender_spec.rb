@@ -242,12 +242,12 @@ describe Telephony::Pinpoint::SmsSender do
     end
   end
 
-  describe '#voip_phone?' do
+  describe '#phone_type' do
     let(:phone_number) { '+18888675309' }
     let(:pinpoint_client) { Aws::Pinpoint::Client.new(stub_responses: true) }
 
-    subject(:voip_phone?) do
-      sms_sender.voip_phone?(phone_number)
+    subject(:phone_type) do
+      sms_sender.phone_type(phone_number)
     end
 
     before do
@@ -263,34 +263,54 @@ describe Telephony::Pinpoint::SmsSender do
 
     context 'successful network requests' do
       before do
-        pinpoint_client.stub_responses(:phone_number_validate, number_validate_response: { phone_type: phone_type })
+        pinpoint_client.stub_responses(:phone_number_validate, number_validate_response: { phone_type: pinpoint_phone_type })
       end
 
       context 'when the phone number is a mobile number' do
-        let(:phone_type) { 'MOBILE' }
-        it { is_expected.to eq(false) }
+        let(:pinpoint_phone_type) { 'MOBILE' }
+        it { is_expected.to eq(:mobile) }
       end
 
       context 'when the phone number is a voip number' do
-        let(:phone_type) { 'VOIP' }
-        it { is_expected.to eq(true) }
+        let(:pinpoint_phone_type) { 'VOIP' }
+        it { is_expected.to eq(:voip) }
+      end
+
+      context 'when the phone number is a landline number' do
+        let(:pinpoint_phone_type) { 'LANDLINE' }
+        it { is_expected.to eq(:landline) }
       end
     end
 
     context 'when the first config raises a timeout exception' do
-      let(:phone_type) { 'VOIP' }
+      let(:pinpoint_phone_type) { 'VOIP' }
 
       before do
         pinpoint_client.stub_responses(:phone_number_validate, [
           Seahorse::Client::NetworkingError.new(Timeout::Error.new),
-          { number_validate_response: { phone_type: phone_type } },
+          { number_validate_response: { phone_type: pinpoint_phone_type } },
         ])
       end
 
       it 'logs a warning for each failure and tries the other configs' do
         expect(Telephony.config.logger).to receive(:warn).exactly(1).times
 
-        expect(voip_phone?).to eq(true)
+        expect(phone_type).to eq(:voip)
+      end
+    end
+
+    context 'when all configs raise errors' do
+      before do
+        pinpoint_client.stub_responses(
+          :phone_number_validate,
+          Seahorse::Client::NetworkingError.new(Timeout::Error.new),
+        )
+      end
+
+      it 'logs a warning for each failure and returns unknown' do
+        expect(Telephony.config.logger).to receive(:warn).exactly(2).times
+
+        expect(phone_type).to eq(:unknown)
       end
     end
   end

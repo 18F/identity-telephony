@@ -47,17 +47,17 @@ describe Telephony::Test::SmsSender do
     end
   end
 
-  describe '#voip_phone?' do
-    subject(:voip_phone?) { sms_sender.voip_phone?(phone_number) }
+  describe '#phone_type' do
+    subject(:phone_type) { sms_sender.phone_type(phone_number) }
 
     context 'with a phone number that does not generate errors' do
       let(:phone_number) { '+18888675309' }
-      it { is_expected.to eq(false) }
+      it { is_expected.to eq(:mobile) }
     end
 
     context 'with a phone number that generates errors' do
       let(:phone_number) { '+12255551000' }
-      it { is_expected.to eq(true) }
+      it { is_expected.to eq(:unknown) }
     end
   end
 end

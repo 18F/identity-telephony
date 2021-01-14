@@ -60,7 +60,9 @@ module Telephony
                  :send_account_reset_notice,
                  :send_account_reset_cancellation_notice
 
-  def self.voip_phone?(phone_number)
+  # @param [String] phone_number phone number in E.164 format
+  # @return [Symbol] returns `:mobile`, `:landline`, `:voip` or `:unknown` if there was an error
+  def self.phone_type(phone_number)
     sender = case Telephony.config.adapter
     when :pinpoint
       Pinpoint::SmsSender.new
@@ -68,6 +70,6 @@ module Telephony
       Test::SmsSender.new
     end
 
-    sender.voip_phone?(phone_number)
+    sender.phone_type(phone_number)
   end
 end

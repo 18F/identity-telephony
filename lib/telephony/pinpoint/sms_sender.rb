@@ -63,7 +63,7 @@ module Telephony
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 
 
-      def voip_phone?(phone_number)
+      def phone_type(phone_number)
         response = nil
 
         client_configs.each do |client_config|
@@ -79,7 +79,16 @@ module Telephony
           )
         end
 
-        response&.number_validate_response&.phone_type == 'VOIP'
+        case response&.number_validate_response&.phone_type
+        when 'MOBILE'
+          :mobile
+        when 'LANDLINE'
+          :landline
+        when 'VOIP'
+          :voip
+        else
+          :unknown
+        end
       end
 
       # @api private
