@@ -280,6 +280,11 @@ describe Telephony::Pinpoint::SmsSender do
         let(:pinpoint_phone_type) { 'LANDLINE' }
         it { is_expected.to eq(:landline) }
       end
+
+      context 'when the phone number is some unhandled type' do
+        let(:pinpoint_phone_type) { 'NEW_MAGICAL_TYPE' }
+        it { is_expected.to eq(:unknown) }
+      end
     end
 
     context 'when the first config raises a timeout exception' do
