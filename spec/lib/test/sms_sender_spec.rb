@@ -59,7 +59,16 @@ describe Telephony::Test::SmsSender do
       end
     end
 
-    context 'with a phone number that generates errors' do
+    context 'generating a voip phone number' do
+      let(:phone_number) { '+12255552000' }
+      it 'has an error response' do
+        expect(phone_info.type).to eq(:voip)
+        expect(phone_info.carrier).to eq('Test VOIP Carrier')
+        expect(phone_info.error).to be_nil
+      end
+    end
+
+    context 'generating an error response' do
       let(:phone_number) { '+12255551000' }
       it 'has an error response' do
         expect(phone_info.type).to eq(:unknown)
