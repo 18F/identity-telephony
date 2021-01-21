@@ -242,12 +242,12 @@ describe Telephony::Pinpoint::SmsSender do
     end
   end
 
-  describe '#phone_type' do
+  describe '#phone_info' do
     let(:phone_number) { '+18888675309' }
     let(:pinpoint_client) { Aws::Pinpoint::Client.new(stub_responses: true) }
 
-    subject(:phone_type) do
-      sms_sender.phone_type(phone_number)
+    subject(:phone_info) do
+      sms_sender.phone_info(phone_number)
     end
 
     before do
@@ -263,44 +263,61 @@ describe Telephony::Pinpoint::SmsSender do
 
     context 'successful network requests' do
       before do
-        pinpoint_client.stub_responses(:phone_number_validate, number_validate_response: { phone_type: pinpoint_phone_type })
+        pinpoint_client.stub_responses(
+          :phone_number_validate,
+          number_validate_response: {
+            phone_type: phone_type,
+            carrier: 'Example Carrier'
+          }
+        )
+      end
+
+      let(:phone_type) { 'MOBILE' }
+
+      it 'has the carrier' do
+        expect(phone_info.carrier).to eq('Example Carrier')
+      end
+
+      it 'has a blank error' do
+        expect(phone_info.error).to be_nil
       end
 
       context 'when the phone number is a mobile number' do
-        let(:pinpoint_phone_type) { 'MOBILE' }
-        it { is_expected.to eq(:mobile) }
+        let(:phone_type) { 'MOBILE' }
+        it { expect(phone_info.type).to eq(:mobile) }
       end
 
       context 'when the phone number is a voip number' do
-        let(:pinpoint_phone_type) { 'VOIP' }
-        it { is_expected.to eq(:voip) }
+        let(:phone_type) { 'VOIP' }
+        it { expect(phone_info.type).to eq(:voip) }
       end
 
       context 'when the phone number is a landline number' do
-        let(:pinpoint_phone_type) { 'LANDLINE' }
-        it { is_expected.to eq(:landline) }
+        let(:phone_type) { 'LANDLINE' }
+        it { expect(phone_info.type).to eq(:landline) }
       end
 
       context 'when the phone number is some unhandled type' do
-        let(:pinpoint_phone_type) { 'NEW_MAGICAL_TYPE' }
-        it { is_expected.to eq(:unknown) }
+        let(:phone_type) { 'NEW_MAGICAL_TYPE' }
+        it { expect(phone_info.type).to eq(:unknown) }
       end
     end
 
     context 'when the first config raises a timeout exception' do
-      let(:pinpoint_phone_type) { 'VOIP' }
+      let(:phone_type) { 'VOIP' }
 
       before do
         pinpoint_client.stub_responses(:phone_number_validate, [
           Seahorse::Client::NetworkingError.new(Timeout::Error.new),
-          { number_validate_response: { phone_type: pinpoint_phone_type } },
+          { number_validate_response: { phone_type: phone_type } },
         ])
       end
 
       it 'logs a warning for each failure and tries the other configs' do
         expect(Telephony.config.logger).to receive(:warn).exactly(1).times
 
-        expect(phone_type).to eq(:voip)
+        expect(phone_info.type).to eq(:voip)
+        expect(phone_info.error).to be_nil
       end
     end
 
@@ -315,7 +332,8 @@ describe Telephony::Pinpoint::SmsSender do
       it 'logs a warning for each failure and returns unknown' do
         expect(Telephony.config.logger).to receive(:warn).exactly(2).times
 
-        expect(phone_type).to eq(:unknown)
+        expect(phone_info.type).to eq(:unknown)
+        expect(phone_info.error).to be_kind_of(Seahorse::Client::NetworkingError)
       end
     end
   end

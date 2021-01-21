@@ -63,23 +63,25 @@ module Telephony
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 
 
-      def phone_type(phone_number)
+      def phone_info(phone_number)
         response = nil
+        error = nil
 
         client_configs.each do |client_config|
+          error = nil
           response = client_config.client.phone_number_validate(
             number_validate_request: { phone_number: phone_number }
           )
           break if response
-        rescue Seahorse::Client::NetworkingError => e
+        rescue Seahorse::Client::NetworkingError => error
           notify_pinpoint_failover(
-            error: e,
+            error: error,
             region: client_config.config.region,
             extra: {},
           )
         end
 
-        case response&.number_validate_response&.phone_type
+        type = case response&.number_validate_response&.phone_type
         when 'MOBILE'
           :mobile
         when 'LANDLINE'
@@ -89,6 +91,12 @@ module Telephony
         else
           :unknown
         end
+
+        PhoneNumberInfo.new(
+          type: type,
+          carrier: response&.number_validate_response&.carrier,
+          error: error,
+        )
       end
 
       # @api private

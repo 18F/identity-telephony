@@ -13,14 +13,24 @@ module Telephony
         end
       end
 
-      def phone_type(phone_number)
-        case ErrorSimulator.new.error_for_number(phone_number)
+      def phone_info(phone_number)
+        error = ErrorSimulator.new.error_for_number(phone_number)
+        case error
         when TelephonyError
-          :unknown
+          PhoneNumberInfo.new(
+            type: :unknown,
+            error: error
+          )
         when InvalidCallingAreaError
-          :voip
+          PhoneNumberInfo.new(
+            type: :voip,
+            carrier: "Test VOIP Carrier"
+          )
         else
-          :mobile
+          PhoneNumberInfo.new(
+            type: :mobile,
+            carrier: "Test Mobile Carrier"
+          )
         end
       end
 

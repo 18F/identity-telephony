@@ -7,6 +7,7 @@ require 'telephony/alert_sender'
 require 'telephony/configuration'
 require 'telephony/errors'
 require 'telephony/otp_sender'
+require 'telephony/phone_number_info'
 require 'telephony/response'
 require 'telephony/test/call'
 require 'telephony/test/message'
@@ -61,8 +62,8 @@ module Telephony
                  :send_account_reset_cancellation_notice
 
   # @param [String] phone_number phone number in E.164 format
-  # @return [Symbol] returns `:mobile`, `:landline`, `:voip` or `:unknown` if there was an error
-  def self.phone_type(phone_number)
+  # @return [PhoneNumberInfo] info about the phone number
+  def self.phone_info(phone_number)
     sender = case Telephony.config.adapter
     when :pinpoint
       Pinpoint::SmsSender.new
@@ -70,6 +71,6 @@ module Telephony
       Test::SmsSender.new
     end
 
-    sender.phone_type(phone_number)
+    sender.phone_info(phone_number)
   end
 end

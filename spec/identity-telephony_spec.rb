@@ -1,13 +1,13 @@
 RSpec.describe Telephony do
-  describe '.phone_type' do
+  describe '.phone_info' do
     let(:phone_number) { '+18888675309' }
-    subject(:phone_type) { Telephony.phone_type(phone_number) }
+    subject(:phone_info) { Telephony.phone_info(phone_number) }
 
     context 'with test adapter' do
       before { Telephony.config { |c| c.adapter = :test } }
 
       it 'uses the test adapter' do
-        expect(phone_type).to eq(:mobile)
+        expect(phone_info.type).to eq(:mobile)
       end
     end
 
@@ -25,7 +25,7 @@ RSpec.describe Telephony do
       end
 
       it 'uses the pinpoint adapter' do
-        expect(phone_type).to eq(:voip)
+        expect(phone_info.type).to eq(:voip)
       end
     end
   end

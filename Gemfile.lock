@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    identity-telephony (0.1.9)
+    identity-telephony (0.1.10)
       aws-sdk-pinpoint
       aws-sdk-pinpointsmsvoice
       i18n
