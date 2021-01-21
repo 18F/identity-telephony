@@ -47,17 +47,25 @@ describe Telephony::Test::SmsSender do
     end
   end
 
-  describe '#phone_type' do
-    subject(:phone_type) { sms_sender.phone_type(phone_number) }
+  describe '#phone_info' do
+    subject(:phone_info) { sms_sender.phone_info(phone_number) }
 
     context 'with a phone number that does not generate errors' do
       let(:phone_number) { '+18888675309' }
-      it { is_expected.to eq(:mobile) }
+      it 'has a successful response' do
+        expect(phone_info.type).to eq(:mobile)
+        expect(phone_info.carrier).to eq('Test Mobile Carrier')
+        expect(phone_info.error).to be_nil
+      end
     end
 
     context 'with a phone number that generates errors' do
       let(:phone_number) { '+12255551000' }
-      it { is_expected.to eq(:unknown) }
+      it 'has an error response' do
+        expect(phone_info.type).to eq(:unknown)
+        expect(phone_info.carrier).to be_nil
+        expect(phone_info.error).to be_kind_of(StandardError)
+      end
     end
   end
 end
