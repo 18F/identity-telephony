@@ -4,8 +4,6 @@ require 'time'
 module Telephony
   module Pinpoint
     class SmsSender
-      ClientConfig = Struct.new(:client, :config)
-
       ERROR_HASH = {
         'DUPLICATE' => DuplicateEndpointError,
         'OPT_OUT' => OptOutError,
@@ -20,10 +18,10 @@ module Telephony
       # @return [Response]
       def send(message:, to:)
         response = nil
-        client_configs.each do |client_config|
+        Telephony.config.pinpoint.sms_configs.each do |sms_config|
           start = Time.now
-          pinpoint_response = client_config.client.send_messages(
-            application_id: client_config.config.application_id,
+          pinpoint_response = build_client(sms_config).send_messages(
+            application_id: sms_config.application_id,
             message_request: {
               addresses: {
                 to => {
@@ -34,7 +32,7 @@ module Telephony
                 sms_message: {
                   body: message,
                   message_type: 'TRANSACTIONAL',
-                  origination_number: client_config.config.shortcode,
+                  origination_number: sms_config.shortcode,
                 },
               },
             },
@@ -44,7 +42,7 @@ module Telephony
           return response if response.success?
           notify_pinpoint_failover(
             error: response.error,
-            region: client_config.config.region,
+            region: sms_config.region,
             extra: response.extra,
           )
         rescue Seahorse::Client::NetworkingError => e
@@ -52,7 +50,7 @@ module Telephony
           response = handle_pinpoint_error(e)
           notify_pinpoint_failover(
             error: e,
-            region: client_config.config.region,
+            region: sms_config.region,
             extra: {
               duration_ms: Util.duration_ms(start: start, finish: finish),
             },
@@ -67,16 +65,16 @@ module Telephony
         response = nil
         error = nil
 
-        client_configs.each do |client_config|
+        Telephony.config.pinpoint.sms_configs.each do |sms_config|
           error = nil
-          response = client_config.client.phone_number_validate(
+          response = build_client(sms_config).phone_number_validate(
             number_validate_request: { phone_number: phone_number }
           )
           break if response
         rescue Seahorse::Client::NetworkingError => error
           notify_pinpoint_failover(
             error: error,
-            region: client_config.config.region,
+            region: sms_config.region,
             extra: {},
           )
         end
@@ -100,23 +98,13 @@ module Telephony
       end
 
       # @api private
-      # An array of (client, config) pairs
-      # @return [Array<ClientConfig>]
-      def client_configs
-        @client_configs ||= Telephony.config.pinpoint.sms_configs.map do |sms_config|
-          credentials = AwsCredentialBuilder.new(sms_config).call
-          args = { region: sms_config.region, retry_limit: 0 }
-          args[:credentials] = credentials unless credentials.nil?
+      # @param [PinpointSmsConfig] sms_config
+      def build_client(sms_config)
+        args = { region: sms_config.region, retry_limit: 0 }
 
-          ClientConfig.new(
-            build_client(args),
-            sms_config,
-          )
-        end
-      end
+        credentials = AwsCredentialBuilder.new(sms_config).call
+        args[:credentials] = credentials if credentials
 
-      # @api private
-      def build_client(args)
         Aws::Pinpoint::Client.new(args)
       end
 

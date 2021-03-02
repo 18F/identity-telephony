@@ -14,11 +14,8 @@ describe Telephony::Pinpoint::SmsSender do
   describe 'error handling' do
     before do
       expect(sms_sender).to receive(:build_client)
-        .with(
-          region: sms_config.region,
-          credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
-          retry_limit: 0,
-        ).and_return(mock_client)
+        .with(sms_config)
+        .and_return(mock_client)
     end
 
     let(:status_code) { 400 }
@@ -151,11 +148,8 @@ describe Telephony::Pinpoint::SmsSender do
   describe '#send' do
     before do
       expect(sms_sender).to receive(:build_client)
-        .with(
-          region: sms_config.region,
-          credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
-          retry_limit: 0,
-        ).and_return(mock_client)
+        .with(sms_config)
+        .and_return(mock_client)
     end
 
     it 'initializes a pinpoint client and uses that to send a message with a shortcode' do
@@ -195,17 +189,15 @@ describe Telephony::Pinpoint::SmsSender do
           sms.application_id = 'backup-sms-application-id'
         end
 
-        expect(sms_sender).to receive(:build_client)
-          .with(
-            region: backup_sms_config.region,
-            credentials: Aws::Credentials.new(backup_sms_config.access_key_id, backup_sms_config.secret_access_key),
-            retry_limit: 0,
-          ).and_return(backup_mock_client)
+        allow(sms_sender).to receive(:build_client)
+          .with(backup_sms_config)
+          .and_return(backup_mock_client)
       end
 
       context 'when the first config succeeds' do
         it 'only tries one client' do
-          expect(sms_sender.client_configs.last.client).to_not receive(:send_messages)
+          expect(sms_sender).to_not receive(:build_client).
+            with(Telephony.config.pinpoint.sms_configs.last)
 
           response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
           expect(response.success?).to eq(true)
@@ -231,8 +223,8 @@ describe Telephony::Pinpoint::SmsSender do
         let(:raised_error_message) { 'Seahorse::Client::NetworkingError: Net::ReadTimeout' }
 
         it 'logs a warning for each failure and tries the other configs' do
-          expect(sms_sender.client_configs.first.client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
-          expect(sms_sender.client_configs.last.client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
+          expect(mock_client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
+          expect(backup_mock_client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
 
           response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
           expect(response.success?).to eq(false)
@@ -251,14 +243,14 @@ describe Telephony::Pinpoint::SmsSender do
     end
 
     before do
-      expect(sms_sender).to receive(:client_configs).and_return([
-        Telephony::Pinpoint::SmsSender::ClientConfig.new(
-          pinpoint_client, OpenStruct.new(region: 'us-north-5'),
-        ),
-        Telephony::Pinpoint::SmsSender::ClientConfig.new(
-          pinpoint_client, OpenStruct.new(region: 'us-south-1'),
-        ),
-      ])
+      Telephony.config.pinpoint.add_sms_config do |sms|
+        sms.region = 'backup-sms-region'
+        sms.access_key_id = 'fake-pnpoint-access-key-id-sms'
+        sms.secret_access_key = 'fake-pinpoint-secret-access-key-sms'
+        sms.application_id = 'backup-sms-application-id'
+      end
+
+      allow(sms_sender).to receive(:build_client).and_return(pinpoint_client)
     end
 
     context 'successful network requests' do
