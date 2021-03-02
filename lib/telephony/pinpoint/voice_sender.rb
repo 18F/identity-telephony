@@ -8,6 +8,8 @@ module Telephony
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       def send(message:, to:)
+        return handle_config_failure if client_configs.empty?
+
         language_code, voice_id = language_code_and_voice_id
 
         last_error = nil
@@ -55,14 +57,15 @@ module Telephony
       def client_configs
         @client_configs ||= Telephony.config.pinpoint.voice_configs.map do |voice_config|
           credentials = AwsCredentialBuilder.new(voice_config).call
-          args = { region: voice_config.region, retry_limit: 0 }
-          args[:credentials] = credentials unless credentials.nil?
+          next if credentials.nil?
+
+          args = { region: voice_config.region, retry_limit: 0, credentials: credentials }
 
           ClientConfig.new(
             Aws::PinpointSMSVoice::Client.new(args),
             voice_config,
           )
-        end
+        end.compact
       end
 
       private
@@ -108,6 +111,20 @@ module Telephony
         else
           ['en-US', 'Joey']
         end
+      end
+
+      def handle_config_failure
+        response = Response.new(
+          success: false,
+          error: UnknownFailureError.new('Failed to load AWS config'),
+          extra: {
+            channel: 'sms',
+          },
+        )
+
+        Telephony.config.logger.warn(response.to_h.to_json)
+
+        response
       end
     end
   end

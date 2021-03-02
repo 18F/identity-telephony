@@ -1,6 +1,8 @@
 describe Telephony::Pinpoint::SmsSender do
   subject(:sms_sender) { described_class.new }
   let(:sms_config) { Telephony.config.pinpoint.sms_configs.first }
+  let(:backup_sms_config) { Telephony.config.pinpoint.sms_configs.last }
+  let(:backup_mock_client) { Pinpoint::MockClient.new(backup_sms_config) }
   let(:mock_client) { Pinpoint::MockClient.new(sms_config) }
 
   # Monkeypatch library class so we can use it for argument matching
@@ -12,20 +14,13 @@ describe Telephony::Pinpoint::SmsSender do
   end
 
   describe 'error handling' do
-    before do
-      expect(sms_sender).to receive(:build_client)
-        .with(
-          region: sms_config.region,
-          credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
-          retry_limit: 0,
-        ).and_return(mock_client)
-    end
-
     let(:status_code) { 400 }
     let(:delivery_status) { 'DUPLICATE' }
     let(:raised_error_message) { "Pinpoint Error: #{delivery_status} - #{status_code}" }
 
     before do
+      mock_build_client
+
       Pinpoint::MockClient.message_response_result_status_code = status_code
       Pinpoint::MockClient.message_response_result_delivery_status = delivery_status
     end
@@ -149,16 +144,8 @@ describe Telephony::Pinpoint::SmsSender do
   end
 
   describe '#send' do
-    before do
-      expect(sms_sender).to receive(:build_client)
-        .with(
-          region: sms_config.region,
-          credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
-          retry_limit: 0,
-        ).and_return(mock_client)
-    end
-
     it 'initializes a pinpoint client and uses that to send a message with a shortcode' do
+      mock_build_client
       response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
 
       expected_result = {
@@ -184,10 +171,9 @@ describe Telephony::Pinpoint::SmsSender do
     end
 
     context 'with multiple sms configs' do
-      let(:backup_sms_config) { Telephony.config.pinpoint.sms_configs.last }
-      let(:backup_mock_client) { Pinpoint::MockClient.new(backup_sms_config) }
-
       before do
+        mock_build_client
+
         Telephony.config.pinpoint.add_sms_config do |sms|
           sms.region = 'backup-sms-region'
           sms.access_key_id = 'fake-pnpoint-access-key-id-sms'
@@ -195,12 +181,7 @@ describe Telephony::Pinpoint::SmsSender do
           sms.application_id = 'backup-sms-application-id'
         end
 
-        expect(sms_sender).to receive(:build_client)
-          .with(
-            region: backup_sms_config.region,
-            credentials: Aws::Credentials.new(backup_sms_config.access_key_id, backup_sms_config.secret_access_key),
-            retry_limit: 0,
-          ).and_return(backup_mock_client)
+        mock_build_backup_client
       end
 
       context 'when the first config succeeds' do
@@ -240,6 +221,37 @@ describe Telephony::Pinpoint::SmsSender do
         end
       end
     end
+
+    context 'when all sms configs fail to build' do
+      let(:raised_error_message) { 'Failed to load AWS config' }
+
+      it 'logs a warning and returns an error' do
+        expect(sms_sender).to receive(:client_configs).and_return([])
+        expect(Telephony.config.logger).to receive(:warn).once
+
+        response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::UnknownFailureError.new(raised_error_message))
+      end
+    end
+  end
+
+  def mock_build_client
+    expect(sms_sender).to receive(:build_client)
+      .with(
+        region: sms_config.region,
+        credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
+        retry_limit: 0,
+    ).and_return(mock_client)
+  end
+
+  def mock_build_backup_client
+    expect(sms_sender).to receive(:build_client)
+      .with(
+        region: backup_sms_config.region,
+        credentials: Aws::Credentials.new(backup_sms_config.access_key_id, backup_sms_config.secret_access_key),
+        retry_limit: 0,
+    ).and_return(backup_mock_client)
   end
 
   describe '#phone_info' do

@@ -25,6 +25,11 @@ module Telephony
           external_id: config.credential_external_id,
           client: Aws::STS::Client.new(region: config.region),
         )
+
+        # STS makes an HTTP call that can fail
+      rescue Seahorse::Client::NetworkingError => e
+        notify_role_failure(error: e, region: config.region)
+        nil
       end
 
       def build_access_key_credential
@@ -32,6 +37,12 @@ module Telephony
           config.access_key_id,
           config.secret_access_key,
         )
+      end
+
+
+      def notify_role_failure(error:, region:)
+        error_log = { error: error, region: region }
+        Telephony.config.logger.warn(error_log.to_json)
       end
     end
   end

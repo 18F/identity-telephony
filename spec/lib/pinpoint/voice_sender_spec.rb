@@ -204,5 +204,18 @@ describe Telephony::Pinpoint::VoiceSender do
         end
       end
     end
+
+    context 'when all voice configs fail to build' do
+      let(:raised_error_message) { 'Failed to load AWS config' }
+
+      it 'logs a warning and returns an error' do
+        expect(voice_sender).to receive(:client_configs).and_return([])
+        expect(Telephony.config.logger).to receive(:warn)
+
+        response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::UnknownFailureError.new(raised_error_message))
+      end
+    end
   end
 end
