@@ -26,7 +26,7 @@ module Telephony
           client: Aws::STS::Client.new(region: config.region),
         )
 
-        # STS makes an HTTP call that can fail
+      # STS makes an HTTP call that can fail
       rescue Seahorse::Client::NetworkingError => e
         notify_role_failure(error: e, region: config.region)
         nil
