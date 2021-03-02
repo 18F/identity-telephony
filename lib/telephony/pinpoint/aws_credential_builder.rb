@@ -23,7 +23,7 @@ module Telephony
           role_arn: config.credential_role_arn,
           role_session_name: config.credential_role_session_name,
           external_id: config.credential_external_id,
-          client: Aws::STS::Client.new(region: config.region),
+          client: Aws::STS::Client.new(region: config.region, http_read_timeout: 1, http_open_timeout: 1),
         )
       end
 
