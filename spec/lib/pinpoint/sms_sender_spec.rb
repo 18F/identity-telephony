@@ -172,8 +172,6 @@ describe Telephony::Pinpoint::SmsSender do
 
     context 'with multiple sms configs' do
       before do
-        mock_build_client
-
         Telephony.config.pinpoint.add_sms_config do |sms|
           sms.region = 'backup-sms-region'
           sms.access_key_id = 'fake-pnpoint-access-key-id-sms'
@@ -181,12 +179,13 @@ describe Telephony::Pinpoint::SmsSender do
           sms.application_id = 'backup-sms-application-id'
         end
 
+        mock_build_client
         mock_build_backup_client
       end
 
       context 'when the first config succeeds' do
         it 'only tries one client' do
-          expect(sms_sender.client_configs.last.client).to_not receive(:send_messages)
+          expect(backup_mock_client).to_not receive(:send_messages)
 
           response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
           expect(response.success?).to eq(true)
@@ -212,8 +211,8 @@ describe Telephony::Pinpoint::SmsSender do
         let(:raised_error_message) { 'Seahorse::Client::NetworkingError: Net::ReadTimeout' }
 
         it 'logs a warning for each failure and tries the other configs' do
-          expect(sms_sender.client_configs.first.client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
-          expect(sms_sender.client_configs.last.client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
+          expect(mock_client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
+          expect(backup_mock_client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
 
           response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
           expect(response.success?).to eq(false)
@@ -226,7 +225,8 @@ describe Telephony::Pinpoint::SmsSender do
       let(:raised_error_message) { 'Failed to load AWS config' }
 
       it 'logs a warning and returns an error' do
-        expect(sms_sender).to receive(:client_configs).and_return([])
+        Telephony.config.pinpoint.sms_configs.clear
+
         expect(Telephony.config.logger).to receive(:warn).once
 
         response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
@@ -236,22 +236,16 @@ describe Telephony::Pinpoint::SmsSender do
     end
   end
 
-  def mock_build_client
+  def mock_build_client(client = mock_client)
     expect(sms_sender).to receive(:build_client)
-      .with(
-        region: sms_config.region,
-        credentials: Aws::Credentials.new(sms_config.access_key_id, sms_config.secret_access_key),
-        retry_limit: 0,
-    ).and_return(mock_client)
+      .with(sms_config)
+      .and_return(client)
   end
 
-  def mock_build_backup_client
-    expect(sms_sender).to receive(:build_client)
-      .with(
-        region: backup_sms_config.region,
-        credentials: Aws::Credentials.new(backup_sms_config.access_key_id, backup_sms_config.secret_access_key),
-        retry_limit: 0,
-    ).and_return(backup_mock_client)
+  def mock_build_backup_client(client = backup_mock_client)
+    allow(sms_sender).to receive(:build_client)
+      .with(backup_sms_config)
+      .and_return(client)
   end
 
   describe '#phone_info' do
@@ -263,14 +257,15 @@ describe Telephony::Pinpoint::SmsSender do
     end
 
     before do
-      expect(sms_sender).to receive(:client_configs).and_return([
-        Telephony::Pinpoint::SmsSender::ClientConfig.new(
-          pinpoint_client, OpenStruct.new(region: 'us-north-5'),
-        ),
-        Telephony::Pinpoint::SmsSender::ClientConfig.new(
-          pinpoint_client, OpenStruct.new(region: 'us-south-1'),
-        ),
-      ])
+      Telephony.config.pinpoint.add_sms_config do |sms|
+        sms.region = 'backup-sms-region'
+        sms.access_key_id = 'fake-pnpoint-access-key-id-sms'
+        sms.secret_access_key = 'fake-pinpoint-secret-access-key-sms'
+        sms.application_id = 'backup-sms-application-id'
+      end
+
+      mock_build_client(pinpoint_client)
+      mock_build_backup_client(pinpoint_client)
     end
 
     context 'successful network requests' do

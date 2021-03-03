@@ -4,8 +4,6 @@ require 'time'
 module Telephony
   module Pinpoint
     class SmsSender
-      ClientConfig = Struct.new(:client, :config)
-
       ERROR_HASH = {
         'DUPLICATE' => DuplicateEndpointError,
         'OPT_OUT' => OptOutError,
@@ -19,13 +17,15 @@ module Telephony
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       # @return [Response]
       def send(message:, to:)
-        return handle_config_failure if client_configs.empty?
+        return handle_config_failure if Telephony.config.pinpoint.sms_configs.empty?
 
         response = nil
-        client_configs.each do |client_config|
+        Telephony.config.pinpoint.sms_configs.each do |sms_config|
           start = Time.now
-          pinpoint_response = client_config.client.send_messages(
-            application_id: client_config.config.application_id,
+          client = build_client(sms_config)
+          next if client.nil?
+          pinpoint_response = client.send_messages(
+            application_id: sms_config.application_id,
             message_request: {
               addresses: {
                 to => {
@@ -36,7 +36,7 @@ module Telephony
                 sms_message: {
                   body: message,
                   message_type: 'TRANSACTIONAL',
-                  origination_number: client_config.config.shortcode,
+                  origination_number: sms_config.shortcode,
                 },
               },
             },
@@ -46,7 +46,7 @@ module Telephony
           return response if response.success?
           notify_pinpoint_failover(
             error: response.error,
-            region: client_config.config.region,
+            region: sms_config.region,
             extra: response.extra,
           )
         rescue Seahorse::Client::NetworkingError => e
@@ -54,7 +54,7 @@ module Telephony
           response = handle_pinpoint_error(e)
           notify_pinpoint_failover(
             error: e,
-            region: client_config.config.region,
+            region: sms_config.region,
             extra: {
               duration_ms: Util.duration_ms(start: start, finish: finish),
             },
@@ -64,21 +64,24 @@ module Telephony
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 
-
       def phone_info(phone_number)
+        return handle_config_failure if Telephony.config.pinpoint.sms_configs.empty?
+
         response = nil
         error = nil
 
-        client_configs.each do |client_config|
+        Telephony.config.pinpoint.sms_configs.each do |sms_config|
           error = nil
-          response = client_config.client.phone_number_validate(
+          client = build_client(sms_config)
+          next if client.nil?
+          response = client.phone_number_validate(
             number_validate_request: { phone_number: phone_number }
           )
           break if response
         rescue Seahorse::Client::NetworkingError => error
           notify_pinpoint_failover(
             error: error,
-            region: client_config.config.region,
+            region: sms_config.region,
             extra: {},
           )
         end
@@ -102,25 +105,16 @@ module Telephony
       end
 
       # @api private
-      # An array of (client, config) pairs
-      # @return [Array<ClientConfig>]
-      def client_configs
-        @client_configs ||= Telephony.config.pinpoint.sms_configs.map do |sms_config|
-          credentials = AwsCredentialBuilder.new(sms_config).call
-          next if credentials.nil?
-
-          args = { region: sms_config.region, retry_limit: 0, credentials: credentials }
-
-          ClientConfig.new(
-            build_client(args),
-            sms_config,
-          )
-        end.compact
-      end
-
-      # @api private
-      def build_client(args)
-        Aws::Pinpoint::Client.new(args)
+      # @param [PinpointSmsConfig] sms_config
+      # @return [nil, Aws::Pinpoint::Client]
+      def build_client(sms_config)
+        credentials = AwsCredentialBuilder.new(sms_config).call
+        return if credentials.nil?
+        Aws::Pinpoint::Client.new(
+          region: sms_config.region,
+          retry_limit: 0,
+          credentials: credentials,
+        )
       end
 
       private
