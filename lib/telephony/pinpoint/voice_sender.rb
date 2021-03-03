@@ -47,7 +47,8 @@ module Telephony
             },
           )
         end
-        last_error
+
+        last_error || handle_config_failure
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 

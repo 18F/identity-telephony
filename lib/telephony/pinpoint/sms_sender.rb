@@ -60,7 +60,7 @@ module Telephony
             },
           )
         end
-        response
+        response || handle_config_failure
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 
@@ -96,6 +96,8 @@ module Telephony
         else
           :unknown
         end
+
+        error ||= unknown_failure_error if !response
 
         PhoneNumberInfo.new(
           type: type,
@@ -176,7 +178,7 @@ module Telephony
       def handle_config_failure
         response = Response.new(
           success: false,
-          error: UnknownFailureError.new('Failed to load AWS config'),
+          error: unknown_failure_error,
           extra: {
             channel: 'sms',
           },
@@ -185,6 +187,10 @@ module Telephony
         Telephony.config.logger.warn(response.to_h.to_json)
 
         response
+      end
+
+      def unknown_failure_error
+        UnknownFailureError.new('Failed to load AWS config')
       end
     end
   end

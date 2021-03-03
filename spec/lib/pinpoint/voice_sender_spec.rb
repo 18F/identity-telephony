@@ -227,10 +227,10 @@ describe Telephony::Pinpoint::VoiceSender do
 
     context 'when all voice configs fail to build' do
       let(:raised_error_message) { 'Failed to load AWS config' }
+      let(:pinpoint_client) { nil }
+      let(:backup_pinpoint_client) { nil }
 
       it 'logs a warning and returns an error' do
-        Telephony.config.pinpoint.voice_configs.clear
-
         expect(Telephony.config.logger).to receive(:warn)
 
         response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')

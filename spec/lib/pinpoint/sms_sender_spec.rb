@@ -219,19 +219,19 @@ describe Telephony::Pinpoint::SmsSender do
           expect(response.error).to eq(Telephony::TelephonyError.new(raised_error_message))
         end
       end
-    end
 
-    context 'when all sms configs fail to build' do
-      let(:raised_error_message) { 'Failed to load AWS config' }
+      context 'when all sms configs fail to build' do
+        let(:raised_error_message) { 'Failed to load AWS config' }
+        let(:mock_client) { nil }
+        let(:backup_mock_client) { nil }
 
-      it 'logs a warning and returns an error' do
-        Telephony.config.pinpoint.sms_configs.clear
+        it 'logs a warning and returns an error' do
+          expect(Telephony.config.logger).to receive(:warn).once
 
-        expect(Telephony.config.logger).to receive(:warn).once
-
-        response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
-        expect(response.success?).to eq(false)
-        expect(response.error).to eq(Telephony::UnknownFailureError.new(raised_error_message))
+          response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+          expect(response.success?).to eq(false)
+          expect(response.error).to eq(Telephony::UnknownFailureError.new(raised_error_message))
+        end
       end
     end
   end
@@ -341,6 +341,15 @@ describe Telephony::Pinpoint::SmsSender do
 
         expect(phone_info.type).to eq(:unknown)
         expect(phone_info.error).to be_kind_of(Seahorse::Client::NetworkingError)
+      end
+    end
+
+    context 'when all sms configs fail to build' do
+      let(:pinpoint_client) { nil }
+
+      it 'returns unknown' do
+        expect(phone_info.type).to eq(:unknown)
+        expect(phone_info.error).to be_kind_of(Telephony::UnknownFailureError)
       end
     end
   end
