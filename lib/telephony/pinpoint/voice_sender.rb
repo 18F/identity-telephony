@@ -4,18 +4,18 @@ require 'telephony/util'
 module Telephony
   module Pinpoint
     class VoiceSender
-      ClientConfig = Struct.new(:client, :config)
-
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       def send(message:, to:)
-        return handle_config_failure if client_configs.empty?
+        return handle_config_failure if Telephony.config.pinpoint.voice_configs.empty?
 
         language_code, voice_id = language_code_and_voice_id
 
         last_error = nil
-        client_configs.each do |client_config|
+        Telephony.config.pinpoint.voice_configs.each do |voice_config|
           start = Time.now
-          response = client_config.client.send_voice_message(
+          client = build_client(voice_config)
+          next if client.nil?
+          response = client.send_voice_message(
             content: {
               plain_text_message: {
                 text: message,
@@ -24,7 +24,7 @@ module Telephony
               },
             },
             destination_phone_number: to,
-            origination_phone_number: client_config.config.longcode_pool.sample,
+            origination_phone_number: voice_config.longcode_pool.sample,
           )
           finish = Time.now
           return Response.new(
@@ -40,7 +40,7 @@ module Telephony
           last_error = handle_pinpoint_error(e)
           notify_pinpoint_failover(
             error: e,
-            region: client_config.config.region,
+            region: voice_config.region,
             extra: {
               message_id: response&.message_id,
               duration_ms: Util.duration_ms(start: start, finish: finish),
@@ -52,20 +52,17 @@ module Telephony
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
 
       # @api private
-      # An array of (client, config) pairs
-      # @return [Array<ClientConfig>]
-      def client_configs
-        @client_configs ||= Telephony.config.pinpoint.voice_configs.map do |voice_config|
-          credentials = AwsCredentialBuilder.new(voice_config).call
-          next if credentials.nil?
+      # @param [PinpointVoiceConfiguration] voice_config
+      # @return [nil, Aws::PinpointSMSVoice::Client]
+      def build_client(voice_config)
+        credentials = AwsCredentialBuilder.new(voice_config).call
+        return if credentials.nil?
 
-          args = { region: voice_config.region, retry_limit: 0, credentials: credentials }
-
-          ClientConfig.new(
-            Aws::PinpointSMSVoice::Client.new(args),
-            voice_config,
-          )
-        end.compact
+        Aws::PinpointSMSVoice::Client.new(
+          region: voice_config.region,
+          retry_limit: 0,
+          credentials: credentials,
+        )
       end
 
       private
