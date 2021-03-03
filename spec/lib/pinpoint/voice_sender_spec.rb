@@ -1,11 +1,27 @@
 describe Telephony::Pinpoint::VoiceSender do
   subject(:voice_sender) { described_class.new }
 
+  let(:pinpoint_client) { Aws::PinpointSMSVoice::Client.new(stub_responses: true) }
+  let(:voice_config) { Telephony.config.pinpoint.voice_configs.first }
+
+  let(:backup_pinpoint_client) { Aws::PinpointSMSVoice::Client.new(stub_responses: true) }
+  let(:backup_voice_config) { Telephony.config.pinpoint.voice_configs.last }
+
+  def mock_build_client
+    allow(voice_sender).to receive(:build_client)
+      .with(voice_config)
+      .and_return(pinpoint_client)
+  end
+
+  def mock_build_backup_client
+    allow(voice_sender).to receive(:build_client)
+      .with(backup_voice_config)
+      .and_return(backup_pinpoint_client)
+  end
+
   describe '#send' do
     let(:pinpoint_response) do
-      response = double()
-      allow(response).to receive(:message_id).and_return('fake-message-id')
-      response
+      double(message_id: 'fake-message-id')
     end
     let(:message) { 'This is a test!' }
     let(:sending_phone) { '+12223334444' }
@@ -27,10 +43,12 @@ describe Telephony::Pinpoint::VoiceSender do
     before do
       # More deterministic sending phone
       Telephony.config.pinpoint.voice_configs.first.longcode_pool = [sending_phone]
+
+      mock_build_client
     end
 
     it 'initializes a pinpoint sms and voice client and uses that to send a message' do
-      expect(voice_sender.client_configs.first.client).to receive(:send_voice_message).
+      expect(pinpoint_client).to receive(:send_voice_message).
         with(expected_message).
         and_return(pinpoint_response)
 
@@ -48,7 +66,7 @@ describe Telephony::Pinpoint::VoiceSender do
       it 'calls the user with a spanish voice' do
         expected_message[:content][:plain_text_message][:language_code] = 'es-US'
         expected_message[:content][:plain_text_message][:voice_id] = 'Miguel'
-        expect(voice_sender.client_configs.first.client).to receive(:send_voice_message).
+        expect(pinpoint_client).to receive(:send_voice_message).
           with(expected_message).
           and_return(pinpoint_response)
 
@@ -67,7 +85,7 @@ describe Telephony::Pinpoint::VoiceSender do
       it 'calls the user with a french voice' do
         expected_message[:content][:plain_text_message][:language_code] = 'fr-FR'
         expected_message[:content][:plain_text_message][:voice_id] = 'Mathieu'
-        expect(voice_sender.client_configs.first.client).to receive(:send_voice_message).
+        expect(pinpoint_client).to receive(:send_voice_message).
           with(expected_message).
           and_return(pinpoint_response)
 
@@ -84,7 +102,7 @@ describe Telephony::Pinpoint::VoiceSender do
           Seahorse::Client::RequestContext.new,
           'This is a test message',
         )
-        expect(voice_sender.client_configs.first.client)
+        expect(pinpoint_client)
           .to receive(:send_voice_message).and_raise(exception)
 
         response = voice_sender.send(message: message, to: recipient_phone)
@@ -103,7 +121,7 @@ describe Telephony::Pinpoint::VoiceSender do
           Seahorse::Client::RequestContext.new,
           'This is a test message',
         )
-        expect(voice_sender.client_configs.first.client)
+        expect(pinpoint_client)
           .to receive(:send_voice_message).and_raise(exception)
 
         response = voice_sender.send(message: message, to: recipient_phone)
@@ -122,7 +140,7 @@ describe Telephony::Pinpoint::VoiceSender do
           Seahorse::Client::RequestContext.new,
           'This is a test message',
         )
-        expect(voice_sender.client_configs.first.client)
+        expect(pinpoint_client)
           .to receive(:send_voice_message).and_raise(exception)
 
         response = voice_sender.send(message: message, to: recipient_phone)
@@ -138,7 +156,7 @@ describe Telephony::Pinpoint::VoiceSender do
     context 'when pinpoint raises a timeout exception' do
       it 'rescues the exception and returns an error' do
         exception = Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)
-        expect(voice_sender.client_configs.first.client).
+        expect(pinpoint_client).
           to receive(:send_voice_message).and_raise(exception)
 
         response = voice_sender.send(message: message, to: recipient_phone)
@@ -158,17 +176,19 @@ describe Telephony::Pinpoint::VoiceSender do
           voice.secret_access_key = 'fake-pinpoint-secret-access-key-voice'
           voice.longcode_pool = [backup_longcode]
         end
+
+        mock_build_backup_client
       end
 
       let(:backup_longcode) { '+18881112222' }
 
       context 'when the first config succeeds' do
         before do
-          expect(voice_sender.client_configs.first.client).to receive(:send_voice_message).
+          expect(pinpoint_client).to receive(:send_voice_message).
             with(expected_message).
             and_return(pinpoint_response)
 
-          expect(voice_sender.client_configs.last.client).to_not receive(:send_voice_message)
+          expect(backup_pinpoint_client).to_not receive(:send_voice_message)
         end
 
         it 'only tries one client' do
@@ -185,12 +205,12 @@ describe Telephony::Pinpoint::VoiceSender do
             Seahorse::Client::RequestContext.new,
             'This is a test message',
           )
-          expect(voice_sender.client_configs.first.client)
+          expect(pinpoint_client)
             .to receive(:send_voice_message).and_raise(exception)
 
           # second config succeeds
           expected_message[:origination_phone_number] = backup_longcode
-          expect(voice_sender.client_configs.last.client).to receive(:send_voice_message).
+          expect(backup_pinpoint_client).to receive(:send_voice_message).
             with(expected_message).
             and_return(pinpoint_response)
         end
@@ -202,6 +222,20 @@ describe Telephony::Pinpoint::VoiceSender do
           expect(response.success?).to eq(true)
           expect(response.extra[:message_id]).to eq('fake-message-id')
         end
+      end
+    end
+
+    context 'when all voice configs fail to build' do
+      let(:raised_error_message) { 'Failed to load AWS config' }
+      let(:pinpoint_client) { nil }
+      let(:backup_pinpoint_client) { nil }
+
+      it 'logs a warning and returns an error' do
+        expect(Telephony.config.logger).to receive(:warn)
+
+        response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+        expect(response.success?).to eq(false)
+        expect(response.error).to eq(Telephony::UnknownFailureError.new(raised_error_message))
       end
     end
   end

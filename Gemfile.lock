@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    identity-telephony (0.1.11)
+    identity-telephony (0.1.12)
       aws-sdk-pinpoint
       aws-sdk-pinpointsmsvoice
       i18n
@@ -32,8 +32,8 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     ast (2.4.0)
     aws-eventstream (1.1.0)
-    aws-partitions (1.417.0)
-    aws-sdk-core (3.111.2)
+    aws-partitions (1.429.0)
+    aws-sdk-core (3.112.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
