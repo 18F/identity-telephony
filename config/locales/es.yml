@@ -4,16 +4,14 @@ es:
     account_reset_cancellation_notice: Su solicitud para eliminar su cuenta de login.gov ha sido cancelada.
     account_reset_notice: Según lo solicitado, su cuenta login.gov se eliminará en 24 horas. ¿No quieres eliminar tu cuenta? Inicie sesión en su cuenta login.gov para cancelar.
     authentication_otp:
-      sms: >-
+      sms: |-
         Login.gov: Su código de seguridad es %{code}. Este código se vence en %{expiration} minutos. No lo comparta con ninguna persona.
-
 
         @login.gov #%{code}
       voice: "¡Hola! Su código de acceso de login.gov es, %{code}, nuevamente, su código de acceso es %{code}. Este código caducará en %{expiration} minutos."
     confirmation_otp:
-      sms: >-
+      sms: |-
         Login.gov: Su código de seguridad es %{code}. Este código se vence en %{expiration} minutos. No lo comparta con ninguna persona.
-
 
         @login.gov #%{code}
       voice: "¡Hola! Su código de acceso de login.gov es, %{code}, nuevamente, su código de acceso es %{code}. Este código caducará en %{expiration} minutos."

@@ -4,16 +4,14 @@ fr:
     account_reset_cancellation_notice: Votre demande de suppression de votre compte login.gov a été annulée.
     account_reset_notice: Comme demandé, votre compte login.gov sera supprimé dans les 24 heures. Vous ne voulez pas supprimer votre compte? Connectez-vous à votre compte login.gov pour le annuler.
     authentication_otp:
-      sms: >-
+      sms: |-
         Login.gov: Votre code de sécurité est %{code}. Il est valable pendant %{expiration} minutes. Vous ne devez jamais partager ce code avec personne.
-
 
         @login.gov #%{code}
       voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est, %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera dans %{expiration} minutes.
     confirmation_otp:
-      sms: >-
+      sms: |-
         Login.gov: Votre code de sécurité est %{code}. Il est valable pendant %{expiration} minutes. Vous ne devez jamais partager ce code avec personne.
-
 
         @login.gov #%{code}
       voice: Bonjour! Votre code de sécurité à utilisation unique de login.gov est, %{code}, de nouveau, votre code de sécurité est, %{code}. Ce code expirera dans %{expiration} minutes.
