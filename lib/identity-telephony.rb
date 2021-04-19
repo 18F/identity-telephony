@@ -29,21 +29,23 @@ module Telephony
     @config
   end
 
-  def self.send_authentication_otp(to:, otp:, expiration:, channel:)
+  def self.send_authentication_otp(to:, otp:, expiration:, channel:, domain:)
     OtpSender.new(
       to: to,
       otp: otp,
       expiration: expiration,
-      channel: channel
+      channel: channel,
+      domain: domain,
     ).send_authentication_otp
   end
 
-  def self.send_confirmation_otp(to:, otp:, expiration:, channel:)
+  def self.send_confirmation_otp(to:, otp:, expiration:, channel:, domain:)
     OtpSender.new(
       to: to,
       otp: otp,
       expiration: expiration,
-      channel: channel
+      channel: channel,
+      domain: domain,
     ).send_confirmation_otp
   end
 

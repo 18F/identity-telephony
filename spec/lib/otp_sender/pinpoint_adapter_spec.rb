@@ -1,10 +1,19 @@
 describe Telephony::OtpSender do
   context 'with the pinpoint adapter' do
-    subject { described_class.new(to: to, otp: otp, expiration: expiration, channel: channel) }
+    subject do
+      described_class.new(
+        to: to,
+        otp: otp,
+        expiration: expiration,
+        channel: channel,
+        domain: domain,
+      )
+    end
 
     let(:to) { '+1 (202) 262-1234' }
     let(:otp) { '123456' }
     let(:expiration) { 5 }
+    let(:domain) { 'login.gov' }
 
     before do
       allow(Telephony.config).to receive(:adapter).and_return(:pinpoint)

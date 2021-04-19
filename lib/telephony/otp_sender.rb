@@ -1,12 +1,13 @@
 module Telephony
   class OtpSender
-    attr_reader :recipient_phone, :otp, :expiration, :channel
+    attr_reader :recipient_phone, :otp, :expiration, :channel, :domain
 
-    def initialize(to:, otp:, expiration:, channel:)
+    def initialize(to:, otp:, expiration:, channel:, domain:)
       @recipient_phone = to
       @otp = otp
       @expiration = expiration
       @channel = channel.to_sym
+      @domain = domain
     end
 
     def send_authentication_otp
@@ -55,6 +56,7 @@ module Telephony
         "telephony.authentication_otp.#{channel}",
         code: otp_transformed_for_channel,
         expiration: expiration,
+        domain: domain,
       )
     end
 
@@ -63,6 +65,7 @@ module Telephony
         "telephony.confirmation_otp.#{channel}",
         code: otp_transformed_for_channel,
         expiration: expiration,
+        domain: domain,
       )
     end
 
