@@ -107,4 +107,47 @@ RSpec.describe Telephony::OtpSender do
       end
     end
   end
+
+  describe '#otp_transformed_for_channel' do
+    let(:otp_sender) do
+      Telephony::OtpSender.new(
+        to: '+18888675309',
+        otp: otp,
+        channel: channel,
+        expiration: Time.now
+      )
+    end
+
+    subject(:otp_transformed_for_channel) { otp_sender.send(:otp_transformed_for_channel) }
+
+    context 'for voice' do
+      let(:channel) { :voice }
+
+      context 'with a numeric code' do
+        let(:otp) { '123456' }
+
+        it 'is the code separated by commas' do
+          expect(otp_transformed_for_channel).to eq('1, 2, 3, 4, 5, 6')
+        end
+      end
+
+      context 'with an alphanumeric code' do
+        let(:otp) { 'ABC123' }
+
+        it 'is the code separated by commas' do
+          expect(otp_transformed_for_channel).to eq('A, B, C, 1, 2, 3')
+        end
+      end
+    end
+
+    context 'for sms' do
+      let(:channel) { :sms }
+
+      let(:otp) { 'ABC123' }
+
+      it 'is the code' do
+        expect(otp_transformed_for_channel).to eq(otp)
+      end
+    end
+  end
 end

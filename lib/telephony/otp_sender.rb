@@ -69,7 +69,7 @@ module Telephony
     def otp_transformed_for_channel
       return otp if channel != :voice
 
-      otp.scan(/\d/).join(', ')
+      otp.split('').join(', ')
     end
   end
 end
