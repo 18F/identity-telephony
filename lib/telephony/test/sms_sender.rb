@@ -1,10 +1,10 @@
 module Telephony
   module Test
     class SmsSender
-      def send(message:, to:)
+      def send(message:, to:, otp: nil)
         error = ErrorSimulator.new.error_for_number(to)
         if error.nil?
-          Message.messages.push(Message.new(body: message, to: to))
+          Message.messages.push(Message.new(body: message, to: to, otp: otp))
           success_response
         else
           Response.new(

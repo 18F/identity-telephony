@@ -5,7 +5,7 @@ module Telephony
   module Pinpoint
     class VoiceSender
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
-      def send(message:, to:)
+      def send(message:, to:, otp: nil)
         return handle_config_failure if Telephony.config.pinpoint.voice_configs.empty?
 
         language_code, voice_id = language_code_and_voice_id

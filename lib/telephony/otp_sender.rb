@@ -10,13 +10,13 @@ module Telephony
     end
 
     def send_authentication_otp
-      response = adapter.send(message: authentication_message, to: recipient_phone)
+      response = adapter.send(message: authentication_message, to: recipient_phone, otp: otp)
       log_response(response, context: :authentication)
       response
     end
 
     def send_confirmation_otp
-      response = adapter.send(message: confirmation_message, to: recipient_phone)
+      response = adapter.send(message: confirmation_message, to: recipient_phone, otp: otp)
       log_response(response, context: :confirmation)
       response
     end

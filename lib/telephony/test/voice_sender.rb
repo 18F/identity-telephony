@@ -1,10 +1,10 @@
 module Telephony
   module Test
     class VoiceSender
-      def send(message:, to:)
+      def send(message:, to:, otp: nil)
         error = ErrorSimulator.new.error_for_number(to)
         if error.nil?
-          Call.calls.push(Call.new(body: message, to: to))
+          Call.calls.push(Call.new(body: message, to: to, otp: otp))
           Response.new(success: true, extra: { request_id: 'fake-message-request-id' })
         else
           Response.new(

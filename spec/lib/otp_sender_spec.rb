@@ -66,7 +66,7 @@ RSpec.describe Telephony::OtpSender do
         message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone."
 
         adapter = instance_double(Telephony::Pinpoint::SmsSender)
-        expect(adapter).to receive(:send).with(message: message, to: to)
+        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
         expect(Telephony::Pinpoint::SmsSender).to receive(:new).and_return(adapter)
 
         subject.send_authentication_otp
@@ -76,7 +76,7 @@ RSpec.describe Telephony::OtpSender do
         message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone."
 
         adapter = instance_double(Telephony::Pinpoint::SmsSender)
-        expect(adapter).to receive(:send).with(message: message, to: to)
+        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
         expect(Telephony::Pinpoint::SmsSender).to receive(:new).and_return(adapter)
 
         subject.send_confirmation_otp
@@ -90,7 +90,7 @@ RSpec.describe Telephony::OtpSender do
         message = 'Hello! Your login.gov one time passcode is, 1, 2, 3, 4, 5, 6, again, your passcode is, 1, 2, 3, 4, 5, 6. This code expires in 5 minutes.'
 
         adapter = instance_double(Telephony::Pinpoint::VoiceSender)
-        expect(adapter).to receive(:send).with(message: message, to: to)
+        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
         expect(Telephony::Pinpoint::VoiceSender).to receive(:new).and_return(adapter)
 
         subject.send_confirmation_otp
@@ -100,7 +100,7 @@ RSpec.describe Telephony::OtpSender do
         message = 'Hello! Your login.gov one time passcode is, 1, 2, 3, 4, 5, 6, again, your passcode is, 1, 2, 3, 4, 5, 6. This code expires in 5 minutes.'
 
         adapter = instance_double(Telephony::Pinpoint::VoiceSender)
-        expect(adapter).to receive(:send).with(message: message, to: to)
+        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
         expect(Telephony::Pinpoint::VoiceSender).to receive(:new).and_return(adapter)
 
         subject.send_confirmation_otp
