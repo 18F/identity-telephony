@@ -23,6 +23,8 @@ describe Telephony::Test::Message do
     before do
       described_class.clear_messages
       [
+        described_class.new(to: '+1 (555) 1111', body: 'ABC123 is the code'),
+        described_class.new(to: '+1 (555) 2222', body: 'ABCDEF is the code'),
         described_class.new(to: '+1 (555) 5000', body: '111111 is the code'),
         described_class.new(to: '+1 (555) 5000', body: '222222 is the code'),
         described_class.new(to: '+1 (555) 5000', body: 'plain alert'),
@@ -54,6 +56,13 @@ describe Telephony::Test::Message do
         described_class.clear_messages
 
         expect(described_class.last_otp).to eq(nil)
+      end
+    end
+
+    context 'with alphanumeric OTPs' do
+      it 'returns the most recent ones' do
+        expect(described_class.last_otp(phone: '+1 (555) 1111')).to eq('ABC123')
+        expect(described_class.last_otp(phone: '+1 (555) 2222')).to eq('ABCDEF')
       end
     end
   end

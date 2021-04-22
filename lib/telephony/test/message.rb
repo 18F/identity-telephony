@@ -28,7 +28,7 @@ module Telephony
       end
 
       def otp
-        match = body.match(/\d{6}/)
+        match = body.match(/[A-Z0-9]{6}/)
         return match.to_s if match
       end
     end
