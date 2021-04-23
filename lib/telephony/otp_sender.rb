@@ -1,22 +1,23 @@
 module Telephony
   class OtpSender
-    attr_reader :recipient_phone, :otp, :expiration, :channel
+    attr_reader :recipient_phone, :otp, :expiration, :channel, :domain
 
-    def initialize(to:, otp:, expiration:, channel:)
+    def initialize(to:, otp:, expiration:, channel:, domain:)
       @recipient_phone = to
       @otp = otp
       @expiration = expiration
       @channel = channel.to_sym
+      @domain = domain
     end
 
     def send_authentication_otp
-      response = adapter.send(message: authentication_message, to: recipient_phone)
+      response = adapter.send(message: authentication_message, to: recipient_phone, otp: otp)
       log_response(response, context: :authentication)
       response
     end
 
     def send_confirmation_otp
-      response = adapter.send(message: confirmation_message, to: recipient_phone)
+      response = adapter.send(message: confirmation_message, to: recipient_phone, otp: otp)
       log_response(response, context: :confirmation)
       response
     end
@@ -55,6 +56,7 @@ module Telephony
         "telephony.authentication_otp.#{channel}",
         code: otp_transformed_for_channel,
         expiration: expiration,
+        domain: domain,
       )
     end
 
@@ -63,13 +65,14 @@ module Telephony
         "telephony.confirmation_otp.#{channel}",
         code: otp_transformed_for_channel,
         expiration: expiration,
+        domain: domain,
       )
     end
 
     def otp_transformed_for_channel
       return otp if channel != :voice
 
-      otp.scan(/\d/).join(', ')
+      otp.split('').join(', ')
     end
   end
 end

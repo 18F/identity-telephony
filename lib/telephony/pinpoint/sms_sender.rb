@@ -16,7 +16,7 @@ module Telephony
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       # @return [Response]
-      def send(message:, to:)
+      def send(message:, to:, otp: nil)
         return handle_config_failure if Telephony.config.pinpoint.sms_configs.empty?
 
         response = nil

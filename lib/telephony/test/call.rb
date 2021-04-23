@@ -1,7 +1,7 @@
 module Telephony
   module Test
     class Call
-      attr_reader :to, :body, :sent_at
+      attr_reader :to, :body, :otp, :sent_at
 
       class << self
         def calls
@@ -21,15 +21,11 @@ module Telephony
         end
       end
 
-      def initialize(to:, body:, sent_at: Time.now)
+      def initialize(to:, body:, otp:, sent_at: Time.now)
         @to = to
         @body = body
+        @otp = otp
         @sent_at = sent_at
-      end
-
-      def otp
-        match = body.match(/(\d(\, )?){6}/)
-        return match.to_s.gsub(', ', '') if match
       end
     end
   end
