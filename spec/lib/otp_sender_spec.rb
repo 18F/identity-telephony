@@ -5,11 +5,20 @@ RSpec.describe Telephony::OtpSender do
   end
 
   context 'with the test adapter' do
-    subject { described_class.new(to: to, otp: otp, expiration: expiration, channel: channel) }
+    subject do
+      described_class.new(
+        to: to,
+        otp: otp,
+        expiration: expiration,
+        channel: channel,
+        domain: domain,
+      )
+    end
 
     let(:to) { '+1 (202) 262-1234' }
     let(:otp) { '123456' }
     let(:expiration) { 5 }
+    let(:domain) { 'login.gov' }
 
     before do
       allow(Telephony.config).to receive(:adapter).and_return(:test)
@@ -49,11 +58,20 @@ RSpec.describe Telephony::OtpSender do
   end
 
   context 'with the pinpoint adapter' do
-    subject { described_class.new(to: to, otp: otp, expiration: expiration, channel: channel) }
+    subject do
+      described_class.new(
+        to: to,
+        otp: otp,
+        expiration: expiration,
+        channel: channel,
+        domain: domain,
+      )
+    end
 
     let(:to) { '+1 (202) 262-1234' }
     let(:otp) { '123456' }
     let(:expiration) { 5 }
+    let(:domain) { 'login.gov' }
 
     before do
       allow(Telephony.config).to receive(:adapter).and_return(:pinpoint)
@@ -63,7 +81,7 @@ RSpec.describe Telephony::OtpSender do
       let(:channel) { :sms }
 
       it 'sends an authentication OTP with Pinpoint SMS' do
-        message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone."
+        message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone.\n\n@login.gov #123456"
 
         adapter = instance_double(Telephony::Pinpoint::SmsSender)
         expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
@@ -73,7 +91,7 @@ RSpec.describe Telephony::OtpSender do
       end
 
       it 'sends a confirmation OTP with Pinpoint SMS' do
-        message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone."
+        message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone.\n\n@login.gov #123456"
 
         adapter = instance_double(Telephony::Pinpoint::SmsSender)
         expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
@@ -114,7 +132,8 @@ RSpec.describe Telephony::OtpSender do
         to: '+18888675309',
         otp: otp,
         channel: channel,
-        expiration: Time.now
+        expiration: Time.now,
+        domain: 'login.gov',
       )
     end
 
