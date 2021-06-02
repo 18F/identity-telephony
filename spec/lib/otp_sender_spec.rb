@@ -115,7 +115,7 @@ RSpec.describe Telephony::OtpSender do
               4 <break time='0.5s' /> 5 <break time='0.5s' /> 6,
               again, your passcode is,
               1 <break time='0.5s' /> 2 <break time='0.5s' /> 3 <break time='0.5s' />
-              4 <break time='0.5s' /> 5 <break time='0.5s' /> 6.
+              4 <break time='0.5s' /> 5 <break time='0.5s' /> 6,
               This code expires in 5 minutes.
             </prosody>
           </speak>
@@ -137,7 +137,7 @@ RSpec.describe Telephony::OtpSender do
               4 <break time='0.5s' /> 5 <break time='0.5s' /> 6,
               again, your passcode is,
               1 <break time='0.5s' /> 2 <break time='0.5s' /> 3 <break time='0.5s' />
-              4 <break time='0.5s' /> 5 <break time='0.5s' /> 6.
+              4 <break time='0.5s' /> 5 <break time='0.5s' /> 6,
               This code expires in 5 minutes.
             </prosody>
           </speak>
