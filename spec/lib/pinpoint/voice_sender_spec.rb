@@ -23,13 +23,13 @@ describe Telephony::Pinpoint::VoiceSender do
     let(:pinpoint_response) do
       double(message_id: 'fake-message-id')
     end
-    let(:message) { 'This is a test!' }
+    let(:message) { '<speak>This is a test!</speak>' }
     let(:sending_phone) { '+12223334444' }
     let(:recipient_phone) { '+1 (123) 456-7890' }
     let(:expected_message) do
       {
         content: {
-          plain_text_message: {
+          ssml_message: {
             text: message,
             language_code: 'en-US',
             voice_id: 'Joey',
@@ -64,8 +64,8 @@ describe Telephony::Pinpoint::VoiceSender do
       end
 
       it 'calls the user with a spanish voice' do
-        expected_message[:content][:plain_text_message][:language_code] = 'es-US'
-        expected_message[:content][:plain_text_message][:voice_id] = 'Miguel'
+        expected_message[:content][:ssml_message][:language_code] = 'es-US'
+        expected_message[:content][:ssml_message][:voice_id] = 'Miguel'
         expect(pinpoint_client).to receive(:send_voice_message).
           with(expected_message).
           and_return(pinpoint_response)
@@ -83,8 +83,8 @@ describe Telephony::Pinpoint::VoiceSender do
       end
 
       it 'calls the user with a french voice' do
-        expected_message[:content][:plain_text_message][:language_code] = 'fr-FR'
-        expected_message[:content][:plain_text_message][:voice_id] = 'Mathieu'
+        expected_message[:content][:ssml_message][:language_code] = 'fr-FR'
+        expected_message[:content][:ssml_message][:voice_id] = 'Mathieu'
         expect(pinpoint_client).to receive(:send_voice_message).
           with(expected_message).
           and_return(pinpoint_response)

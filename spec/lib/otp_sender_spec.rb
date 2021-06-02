@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 RSpec.describe Telephony::OtpSender do
   before do
     Telephony::Test::Message.clear_messages
@@ -105,7 +107,19 @@ RSpec.describe Telephony::OtpSender do
       let(:channel) { :voice }
 
       it 'sends an authentication OTP with Pinpoint Voice' do
-        message = 'Hello! Your login.gov one time passcode is, 1, 2, 3, 4, 5, 6, again, your passcode is, 1, 2, 3, 4, 5, 6. This code expires in 5 minutes.'
+        message = <<~XML.strip.gsub(/\s+/, ' ')
+          <speak>
+            <prosody rate='slow'>
+              Hello! Your login.gov one time passcode is,
+              1 <break time='0.5s' /> 2 <break time='0.5s' /> 3 <break time='0.5s' />
+              4 <break time='0.5s' /> 5 <break time='0.5s' /> 6,
+              again, your passcode is,
+              1 <break time='0.5s' /> 2 <break time='0.5s' /> 3 <break time='0.5s' />
+              4 <break time='0.5s' /> 5 <break time='0.5s' /> 6,
+              This code expires in 5 minutes.
+            </prosody>
+          </speak>
+        XML
 
         adapter = instance_double(Telephony::Pinpoint::VoiceSender)
         expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
@@ -115,10 +129,35 @@ RSpec.describe Telephony::OtpSender do
       end
 
       it 'sends a confirmation OTP with Pinpoint Voice' do
-        message = 'Hello! Your login.gov one time passcode is, 1, 2, 3, 4, 5, 6, again, your passcode is, 1, 2, 3, 4, 5, 6. This code expires in 5 minutes.'
+        message = <<~XML.strip.gsub(/\s+/, ' ')
+          <speak>
+            <prosody rate='slow'>
+              Hello! Your login.gov one time passcode is,
+              1 <break time='0.5s' /> 2 <break time='0.5s' /> 3 <break time='0.5s' />
+              4 <break time='0.5s' /> 5 <break time='0.5s' /> 6,
+              again, your passcode is,
+              1 <break time='0.5s' /> 2 <break time='0.5s' /> 3 <break time='0.5s' />
+              4 <break time='0.5s' /> 5 <break time='0.5s' /> 6,
+              This code expires in 5 minutes.
+            </prosody>
+          </speak>
+        XML
 
         adapter = instance_double(Telephony::Pinpoint::VoiceSender)
         expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
+        expect(Telephony::Pinpoint::VoiceSender).to receive(:new).and_return(adapter)
+
+        subject.send_confirmation_otp
+      end
+
+      it 'sends valid XML' do
+        adapter = instance_double(Telephony::Pinpoint::VoiceSender)
+        expect(adapter).to receive(:send) do |args|
+          message = args[:message]
+          expect { Nokogiri::XML(message) { |config| config.strict } }.to_not raise_error
+
+          {}
+        end
         expect(Telephony::Pinpoint::VoiceSender).to receive(:new).and_return(adapter)
 
         subject.send_confirmation_otp
@@ -146,7 +185,9 @@ RSpec.describe Telephony::OtpSender do
         let(:otp) { '123456' }
 
         it 'is the code separated by commas' do
-          expect(otp_transformed_for_channel).to eq('1, 2, 3, 4, 5, 6')
+          expect(otp_transformed_for_channel).
+            to eq("1 <break time='0.5s' /> 2 <break time='0.5s' /> 3 <break time='0.5s' /> 4 " +
+                  "<break time='0.5s' /> 5 <break time='0.5s' /> 6")
         end
       end
 
@@ -154,7 +195,9 @@ RSpec.describe Telephony::OtpSender do
         let(:otp) { 'ABC123' }
 
         it 'is the code separated by commas' do
-          expect(otp_transformed_for_channel).to eq('A, B, C, 1, 2, 3')
+          expect(otp_transformed_for_channel).
+            to eq("A <break time='0.5s' /> B <break time='0.5s' /> C <break time='0.5s' /> 1 " +
+                  "<break time='0.5s' /> 2 <break time='0.5s' /> 3")
         end
       end
     end
