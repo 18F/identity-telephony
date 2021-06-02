@@ -52,27 +52,43 @@ module Telephony
     end
 
     def authentication_message
-      I18n.t(
-        "telephony.authentication_otp.#{channel}",
-        code: otp_transformed_for_channel,
-        expiration: expiration,
-        domain: domain,
+      wrap_in_ssml_if_needed(
+        I18n.t(
+          "telephony.authentication_otp.#{channel}",
+          code: otp_transformed_for_channel,
+          expiration: expiration,
+          domain: domain,
+        )
       )
     end
 
     def confirmation_message
-      I18n.t(
-        "telephony.confirmation_otp.#{channel}",
-        code: otp_transformed_for_channel,
-        expiration: expiration,
-        domain: domain,
+      wrap_in_ssml_if_needed(
+        I18n.t(
+          "telephony.confirmation_otp.#{channel}",
+          code: otp_transformed_for_channel,
+          expiration: expiration,
+          domain: domain,
+        )
       )
     end
 
     def otp_transformed_for_channel
       return otp if channel != :voice
 
-      otp.split('').join(', ')
+      otp.split('').join(" <break time='#{Telephony.config.voice_pause_time}' /> ")
+    end
+
+    def wrap_in_ssml_if_needed(message)
+      return message if channel != :voice
+
+      <<~XML.strip.gsub(/\s+/, ' ')
+        <speak>
+          <prosody rate='#{Telephony.config.voice_rate}'>
+            #{message}
+          </prosody>
+        </speak>
+      XML
     end
   end
 end

@@ -12,6 +12,9 @@ def use_default_config!
   Telephony.config do |c|
     c.logger = Logger.new(nil)
 
+    c.voice_pause_time = '0.5s'
+    c.voice_rate = 'slow'
+
     c.pinpoint.add_sms_config do |sms|
       sms.region = 'fake-pinpoint-region-sms'
       sms.access_key_id = 'fake-pnpoint-access-key-id-sms'

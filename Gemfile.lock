@@ -152,6 +152,7 @@ DEPENDENCIES
   i18n-tasks
   identity-telephony!
   irb
+  nokogiri
   pry-byebug
   rake
   rspec

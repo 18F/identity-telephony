@@ -17,7 +17,7 @@ module Telephony
           next if client.nil?
           response = client.send_voice_message(
             content: {
-              plain_text_message: {
+              ssml_message: {
                 text: message,
                 language_code: language_code,
                 voice_id: voice_id,
