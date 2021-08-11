@@ -52,6 +52,7 @@ module Telephony
     attr_accessor :logger
     attr_accessor :voice_pause_time
     attr_accessor :voice_rate
+    attr_accessor :sender_id
 
     # rubocop:disable Metrics/MethodLength
     def initialize

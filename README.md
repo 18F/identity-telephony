@@ -12,6 +12,8 @@ Telephony.config do |c|
   c.voice_pause_time = '0.5s'
   c.voice_rate = 'slow'
 
+  c.sender_id = 'some_sender_id'
+
   c.pinpoint.add_sms_config do |sms|
     sms.region = 'us-west-2' # This is optional, us-west-2 is the default
     sms.application_id = 'fake-pinpoint-application-id-sms'
