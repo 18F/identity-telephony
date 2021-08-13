@@ -144,6 +144,12 @@ describe Telephony::Pinpoint::SmsSender do
   end
 
   describe '#send' do
+    let(:sender_id) { 'abcdef' }
+
+    before do
+      allow(Telephony.config).to receive(:sender_id).and_return(sender_id)
+    end
+
     it 'initializes a pinpoint client and uses that to send a message with a shortcode' do
       mock_build_client
       response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
@@ -159,6 +165,7 @@ describe Telephony::Pinpoint::SmsSender do
               body: 'This is a test!',
               message_type: 'TRANSACTIONAL',
               origination_number: '123456',
+              sender_id: sender_id,
             },
           },
         },
