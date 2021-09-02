@@ -2,23 +2,23 @@ module Telephony
   class AlertSender
     SMS_MAX_LENGTH = 160
 
-    def send_account_reset_notice(to:)
+    def send_account_reset_notice(to:, country_code:)
       message = I18n.t('telephony.account_reset_notice')
-      response = adapter.send(message: message, to: to)
+      response = adapter.send(message: message, to: to, country_code: country_code)
       log_response(response, context: __method__.to_s.gsub(/^send_/, ''))
       response
     end
 
-    def send_account_reset_cancellation_notice(to:)
+    def send_account_reset_cancellation_notice(to:, country_code:)
       message = I18n.t('telephony.account_reset_cancellation_notice')
-      response = adapter.send(message: message, to: to)
+      response = adapter.send(message: message, to: to, country_code: country_code)
       log_response(response, context: __method__.to_s.gsub(/^send_/, ''))
       response
     end
 
-    def send_doc_auth_link(to:, link:)
+    def send_doc_auth_link(to:, link:, country_code:)
       message = I18n.t('telephony.doc_auth_link', link: link)
-      response = adapter.send(message: message, to: to)
+      response = adapter.send(message: message, to: to, country_code: country_code)
       context = __method__.to_s.gsub(/^send_/, '')
       if link.length > SMS_MAX_LENGTH
         log_warning("link longer than #{SMS_MAX_LENGTH} characters", context: context)
@@ -27,37 +27,37 @@ module Telephony
       response
     end
 
-    def send_personal_key_regeneration_notice(to:)
+    def send_personal_key_regeneration_notice(to:, country_code:)
       message = I18n.t('telephony.personal_key_regeneration_notice')
-      response = adapter.send(message: message, to: to)
+      response = adapter.send(message: message, to: to, country_code: country_code)
       log_response(response, context: __method__.to_s.gsub(/^send_/, ''))
       response
     end
 
-    def send_personal_key_sign_in_notice(to:)
+    def send_personal_key_sign_in_notice(to:, country_code:)
       message = I18n.t('telephony.personal_key_sign_in_notice')
-      response = adapter.send(message: message, to: to)
+      response = adapter.send(message: message, to: to, country_code: country_code)
       log_response(response, context: __method__.to_s.gsub(/^send_/, ''))
       response
     end
 
-    def send_join_keyword_response(to:)
+    def send_join_keyword_response(to:, country_code:)
       message = I18n.t('telephony.join_keyword_response')
-      response = adapter.send(message: message, to: to)
+      response = adapter.send(message: message, to: to, country_code: country_code)
       log_response(response, context: __method__.to_s.gsub(/^send_/, ''))
       response
     end
 
-    def send_stop_keyword_response(to:)
+    def send_stop_keyword_response(to:, country_code:)
       message = I18n.t('telephony.stop_keyword_response')
-      response = adapter.send(message: message, to: to)
+      response = adapter.send(message: message, to: to, country_code: country_code)
       log_response(response, context: __method__.to_s.gsub(/^send_/, ''))
       response
     end
 
-    def send_help_keyword_response(to:)
+    def send_help_keyword_response(to:, country_code:)
       message = I18n.t('telephony.help_keyword_response')
-      response = adapter.send(message: message, to: to)
+      response = adapter.send(message: message, to: to, country_code: country_code)
       log_response(response, context: __method__.to_s.gsub(/^send_/, ''))
       response
     end

@@ -1,23 +1,24 @@
 module Telephony
   class OtpSender
-    attr_reader :recipient_phone, :otp, :expiration, :channel, :domain
+    attr_reader :recipient_phone, :otp, :expiration, :channel, :domain, :country_code
 
-    def initialize(to:, otp:, expiration:, channel:, domain:)
+    def initialize(to:, otp:, expiration:, channel:, domain:, country_code:)
       @recipient_phone = to
       @otp = otp
       @expiration = expiration
       @channel = channel.to_sym
       @domain = domain
+      @country_code = country_code
     end
 
     def send_authentication_otp
-      response = adapter.send(message: authentication_message, to: recipient_phone, otp: otp)
+      response = adapter.send(message: authentication_message, to: recipient_phone, otp: otp, country_code: country_code)
       log_response(response, context: :authentication)
       response
     end
 
     def send_confirmation_otp
-      response = adapter.send(message: confirmation_message, to: recipient_phone, otp: otp)
+      response = adapter.send(message: confirmation_message, to: recipient_phone, otp: otp, country_code: country_code)
       log_response(response, context: :confirmation)
       response
     end

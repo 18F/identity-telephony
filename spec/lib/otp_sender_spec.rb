@@ -14,6 +14,7 @@ RSpec.describe Telephony::OtpSender do
         expiration: expiration,
         channel: channel,
         domain: domain,
+        country_code: country_code,
       )
     end
 
@@ -21,6 +22,7 @@ RSpec.describe Telephony::OtpSender do
     let(:otp) { '123456' }
     let(:expiration) { 5 }
     let(:domain) { 'login.gov' }
+    let(:country_code) { 'US' }
 
     before do
       allow(Telephony.config).to receive(:adapter).and_return(:test)
@@ -67,6 +69,7 @@ RSpec.describe Telephony::OtpSender do
         expiration: expiration,
         channel: channel,
         domain: domain,
+        country_code: country_code,
       )
     end
 
@@ -74,6 +77,7 @@ RSpec.describe Telephony::OtpSender do
     let(:otp) { '123456' }
     let(:expiration) { 5 }
     let(:domain) { 'login.gov' }
+    let(:country_code) { 'US' }
 
     before do
       allow(Telephony.config).to receive(:adapter).and_return(:pinpoint)
@@ -86,7 +90,7 @@ RSpec.describe Telephony::OtpSender do
         message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone.\n\n@login.gov #123456"
 
         adapter = instance_double(Telephony::Pinpoint::SmsSender)
-        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
+        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp, country_code: 'US')
         expect(Telephony::Pinpoint::SmsSender).to receive(:new).and_return(adapter)
 
         subject.send_authentication_otp
@@ -96,7 +100,7 @@ RSpec.describe Telephony::OtpSender do
         message = "Login.gov: Your security code is 123456. It expires in 5 minutes. Don't share this code with anyone.\n\n@login.gov #123456"
 
         adapter = instance_double(Telephony::Pinpoint::SmsSender)
-        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
+        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp, country_code: 'US')
         expect(Telephony::Pinpoint::SmsSender).to receive(:new).and_return(adapter)
 
         subject.send_confirmation_otp
@@ -122,7 +126,7 @@ RSpec.describe Telephony::OtpSender do
         XML
 
         adapter = instance_double(Telephony::Pinpoint::VoiceSender)
-        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
+        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp, country_code: country_code)
         expect(Telephony::Pinpoint::VoiceSender).to receive(:new).and_return(adapter)
 
         subject.send_confirmation_otp
@@ -144,7 +148,7 @@ RSpec.describe Telephony::OtpSender do
         XML
 
         adapter = instance_double(Telephony::Pinpoint::VoiceSender)
-        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp)
+        expect(adapter).to receive(:send).with(message: message, to: to, otp: otp, country_code: country_code)
         expect(Telephony::Pinpoint::VoiceSender).to receive(:new).and_return(adapter)
 
         subject.send_confirmation_otp
@@ -166,6 +170,7 @@ RSpec.describe Telephony::OtpSender do
   end
 
   describe '#otp_transformed_for_channel' do
+    let(:country_code) { 'US' }
     let(:otp_sender) do
       Telephony::OtpSender.new(
         to: '+18888675309',
@@ -173,6 +178,7 @@ RSpec.describe Telephony::OtpSender do
         channel: channel,
         expiration: Time.now,
         domain: 'login.gov',
+        country_code: country_code,
       )
     end
 

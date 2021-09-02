@@ -29,7 +29,7 @@ describe Telephony::Pinpoint::SmsSender do
       let(:delivery_status) { 'DUPLICATE' }
 
       it 'raises a duplicate endpoint error' do
-        response = subject.send(message: 'hello!', to: '+11234567890')
+        response = subject.send(message: 'hello!', to: '+11234567890', country_code: 'US')
 
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::DuplicateEndpointError.new(raised_error_message))
@@ -42,7 +42,7 @@ describe Telephony::Pinpoint::SmsSender do
       let(:delivery_status) { 'OPT_OUT' }
 
       it 'raises an opt out error' do
-        response = subject.send(message: 'hello!', to: '+11234567890')
+        response = subject.send(message: 'hello!', to: '+11234567890', country_code: 'US')
 
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::OptOutError.new(raised_error_message))
@@ -55,7 +55,7 @@ describe Telephony::Pinpoint::SmsSender do
       let(:delivery_status) { 'PERMANENT_FAILURE' }
 
       it 'raises a permanent failure error' do
-        response = subject.send(message: 'hello!', to: '+11234567890')
+        response = subject.send(message: 'hello!', to: '+11234567890', country_code: 'US')
 
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::PermanentFailureError.new(raised_error_message))
@@ -68,7 +68,7 @@ describe Telephony::Pinpoint::SmsSender do
       let(:delivery_status) { 'TEMPORARY_FAILURE' }
 
       it 'raises an opt out error' do
-        response = subject.send(message: 'hello!', to: '+11234567890')
+        response = subject.send(message: 'hello!', to: '+11234567890', country_code: 'US')
 
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::TemporaryFailureError.new(raised_error_message))
@@ -81,7 +81,7 @@ describe Telephony::Pinpoint::SmsSender do
       let(:delivery_status) { 'THROTTLED' }
 
       it 'raises an opt out error' do
-        response = subject.send(message: 'hello!', to: '+11234567890')
+        response = subject.send(message: 'hello!', to: '+11234567890', country_code: 'US')
 
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::ThrottledError.new(raised_error_message))
@@ -94,7 +94,7 @@ describe Telephony::Pinpoint::SmsSender do
       let(:delivery_status) { 'TIMEOUT' }
 
       it 'raises an opt out error' do
-        response = subject.send(message: 'hello!', to: '+11234567890')
+        response = subject.send(message: 'hello!', to: '+11234567890', country_code: 'US')
 
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::TimeoutError.new(raised_error_message))
@@ -107,7 +107,7 @@ describe Telephony::Pinpoint::SmsSender do
       let(:delivery_status) { 'UNKNOWN_FAILURE' }
 
       it 'raises an opt out error' do
-        response = subject.send(message: 'hello!', to: '+11234567890')
+        response = subject.send(message: 'hello!', to: '+11234567890', country_code: 'US')
 
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::UnknownFailureError.new(raised_error_message))
@@ -120,7 +120,7 @@ describe Telephony::Pinpoint::SmsSender do
       let(:delivery_status) { '' }
 
       it 'raises a generic telephony error' do
-        response = subject.send(message: 'hello!', to: '+11234567890')
+        response = subject.send(message: 'hello!', to: '+11234567890', country_code: 'US')
 
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::TelephonyError.new(raised_error_message))
@@ -134,7 +134,7 @@ describe Telephony::Pinpoint::SmsSender do
 
       it 'handles the exception' do
         expect(mock_client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new))
-        response = subject.send(message: 'hello!', to: '+11234567890')
+        response = subject.send(message: 'hello!', to: '+11234567890', country_code: 'US')
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::TelephonyError.new(raised_error_message))
         expect(response.extra[:delivery_status]).to eq nil
@@ -144,15 +144,18 @@ describe Telephony::Pinpoint::SmsSender do
   end
 
   describe '#send' do
-    let(:sender_id) { 'abcdef' }
+    let(:country_code) { 'US' }
 
     before do
-      allow(Telephony.config).to receive(:sender_id).and_return(sender_id)
+      Telephony.config.country_sender_ids = {
+        US: 'sender1',
+        CA: 'sender2',
+      }
     end
 
     it 'initializes a pinpoint client and uses that to send a message with a shortcode' do
       mock_build_client
-      response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+      response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890', country_code: country_code)
 
       expected_result = {
         application_id: Telephony.config.pinpoint.sms_configs.first.application_id,
@@ -165,7 +168,7 @@ describe Telephony::Pinpoint::SmsSender do
               body: 'This is a test!',
               message_type: 'TRANSACTIONAL',
               origination_number: '123456',
-              sender_id: sender_id,
+              sender_id: 'sender1',
             },
           },
         },
@@ -175,6 +178,18 @@ describe Telephony::Pinpoint::SmsSender do
       expect(response.success?).to eq(true)
       expect(response.error).to eq(nil)
       expect(response.extra[:request_id]).to eq('fake-message-request-id')
+    end
+
+    context 'in a country with no sender ID' do
+      let(:country_code) { 'FR' }
+
+      it 'does not set a sender_id' do
+        mock_build_client
+        response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890', country_code: country_code)
+
+        expect(Pinpoint::MockClient.last_request.dig(:message_request, :message, :sms_message, :sender_id)).to be_nil
+        expect(response.success?).to eq(true)
+      end
     end
 
     context 'with multiple sms configs' do
@@ -194,7 +209,7 @@ describe Telephony::Pinpoint::SmsSender do
         it 'only tries one client' do
           expect(backup_mock_client).to_not receive(:send_messages)
 
-          response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+          response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890', country_code: 'US')
           expect(response.success?).to eq(true)
         end
       end
@@ -208,7 +223,7 @@ describe Telephony::Pinpoint::SmsSender do
         it 'logs a warning for each failure and tries the other configs' do
           expect(Telephony.config.logger).to receive(:warn).exactly(2).times
 
-          response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+          response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890', country_code: 'US')
 
           expect(response.success?).to eq(false)
         end
@@ -221,7 +236,7 @@ describe Telephony::Pinpoint::SmsSender do
           expect(mock_client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
           expect(backup_mock_client).to receive(:send_messages).and_raise(Seahorse::Client::NetworkingError.new(Net::ReadTimeout.new)).once
 
-          response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+          response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890', country_code: 'US')
           expect(response.success?).to eq(false)
           expect(response.error).to eq(Telephony::TelephonyError.new(raised_error_message))
         end
@@ -235,7 +250,7 @@ describe Telephony::Pinpoint::SmsSender do
         it 'logs a warning and returns an error' do
           expect(Telephony.config.logger).to receive(:warn).once
 
-          response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+          response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890', country_code: 'US')
           expect(response.success?).to eq(false)
           expect(response.error).to eq(Telephony::UnknownFailureError.new(raised_error_message))
         end

@@ -52,7 +52,6 @@ module Telephony
     attr_accessor :logger
     attr_accessor :voice_pause_time
     attr_accessor :voice_rate
-    attr_accessor :sender_id
 
     # rubocop:disable Metrics/MethodLength
     def initialize
@@ -64,6 +63,14 @@ module Telephony
 
     def adapter
       @adapter.to_sym
+    end
+
+    def country_sender_ids=(hash)
+      @country_sender_ids = hash.transform_keys(&:to_s)
+    end
+
+    def country_sender_ids
+      @country_sender_ids || {}
     end
   end
 end
