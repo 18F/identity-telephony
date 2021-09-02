@@ -65,8 +65,9 @@ module Telephony
       @adapter.to_sym
     end
 
+    # @param [Hash,nil] map
     def country_sender_ids=(hash)
-      @country_sender_ids = hash.transform_keys(&:to_s)
+      @country_sender_ids = hash&.transform_keys(&:to_s)
     end
 
     def country_sender_ids
