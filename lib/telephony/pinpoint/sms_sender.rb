@@ -16,7 +16,7 @@ module Telephony
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
       # @return [Response]
-      def send(message:, to:, otp: nil)
+      def send(message:, to:, country_code:, otp: nil)
         return handle_config_failure if Telephony.config.pinpoint.sms_configs.empty?
 
         response = nil
@@ -37,7 +37,7 @@ module Telephony
                   body: message,
                   message_type: 'TRANSACTIONAL',
                   origination_number: sms_config.shortcode,
-                  sender_id: Telephony.config.sender_id,
+                  sender_id: Telephony.config.country_sender_ids[country_code.to_s],
                 },
               },
             },

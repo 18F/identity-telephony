@@ -12,7 +12,10 @@ Telephony.config do |c|
   c.voice_pause_time = '0.5s'
   c.voice_rate = 'slow'
 
-  c.sender_id = 'some_sender_id'
+  c.country_sender_ids = {
+    US: 'sender1',
+    CA: 'sender2',
+  }
 
   c.pinpoint.add_sms_config do |sms|
     sms.region = 'us-west-2' # This is optional, us-west-2 is the default

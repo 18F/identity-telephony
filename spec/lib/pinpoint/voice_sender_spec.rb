@@ -52,7 +52,7 @@ describe Telephony::Pinpoint::VoiceSender do
         with(expected_message).
         and_return(pinpoint_response)
 
-      response = voice_sender.send(message: message, to: recipient_phone)
+      response = voice_sender.send(message: message, to: recipient_phone, country_code: 'US')
 
       expect(response.success?).to eq(true)
       expect(response.extra[:message_id]).to eq('fake-message-id')
@@ -70,7 +70,7 @@ describe Telephony::Pinpoint::VoiceSender do
           with(expected_message).
           and_return(pinpoint_response)
 
-        response = voice_sender.send(message: message, to: recipient_phone)
+        response = voice_sender.send(message: message, to: recipient_phone, country_code: 'US')
 
         expect(response.success?).to eq(true)
         expect(response.extra[:message_id]).to eq('fake-message-id')
@@ -89,7 +89,7 @@ describe Telephony::Pinpoint::VoiceSender do
           with(expected_message).
           and_return(pinpoint_response)
 
-        response = voice_sender.send(message: message, to: recipient_phone)
+        response = voice_sender.send(message: message, to: recipient_phone, country_code: 'US')
 
         expect(response.success?).to eq(true)
         expect(response.extra[:message_id]).to eq('fake-message-id')
@@ -105,7 +105,7 @@ describe Telephony::Pinpoint::VoiceSender do
         expect(pinpoint_client)
           .to receive(:send_voice_message).and_raise(exception)
 
-        response = voice_sender.send(message: message, to: recipient_phone)
+        response = voice_sender.send(message: message, to: recipient_phone, country_code: 'US')
 
         error_message =
           'Aws::PinpointSMSVoice::Errors::LimitExceededException: This is a test message'
@@ -124,7 +124,7 @@ describe Telephony::Pinpoint::VoiceSender do
         expect(pinpoint_client)
           .to receive(:send_voice_message).and_raise(exception)
 
-        response = voice_sender.send(message: message, to: recipient_phone)
+        response = voice_sender.send(message: message, to: recipient_phone, country_code: 'US')
 
         error_message =
           'Aws::PinpointSMSVoice::Errors::InternalServiceErrorException: This is a test message'
@@ -143,7 +143,7 @@ describe Telephony::Pinpoint::VoiceSender do
         expect(pinpoint_client)
           .to receive(:send_voice_message).and_raise(exception)
 
-        response = voice_sender.send(message: message, to: recipient_phone)
+        response = voice_sender.send(message: message, to: recipient_phone, country_code: 'US')
 
         error_message =
           'Aws::PinpointSMSVoice::Errors::BadRequestException: This is a test message'
@@ -159,7 +159,7 @@ describe Telephony::Pinpoint::VoiceSender do
         expect(pinpoint_client).
           to receive(:send_voice_message).and_raise(exception)
 
-        response = voice_sender.send(message: message, to: recipient_phone)
+        response = voice_sender.send(message: message, to: recipient_phone, country_code: 'US')
 
         error_message = 'Seahorse::Client::NetworkingError: Net::ReadTimeout'
 
@@ -192,7 +192,7 @@ describe Telephony::Pinpoint::VoiceSender do
         end
 
         it 'only tries one client' do
-          response = voice_sender.send(message: message, to: recipient_phone)
+          response = voice_sender.send(message: message, to: recipient_phone, country_code: 'US')
           expect(response.success?).to eq(true)
           expect(response.extra[:message_id]).to eq('fake-message-id')
         end
@@ -218,7 +218,7 @@ describe Telephony::Pinpoint::VoiceSender do
         it 'logs a warning and tries the other configs' do
           expect(Telephony.config.logger).to receive(:warn)
 
-          response = voice_sender.send(message: message, to: recipient_phone)
+          response = voice_sender.send(message: message, to: recipient_phone, country_code: 'US')
           expect(response.success?).to eq(true)
           expect(response.extra[:message_id]).to eq('fake-message-id')
         end
@@ -233,7 +233,7 @@ describe Telephony::Pinpoint::VoiceSender do
       it 'logs a warning and returns an error' do
         expect(Telephony.config.logger).to receive(:warn)
 
-        response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890')
+        response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890', country_code: 'US')
         expect(response.success?).to eq(false)
         expect(response.error).to eq(Telephony::UnknownFailureError.new(raised_error_message))
       end

@@ -9,7 +9,7 @@ describe Telephony::AlertSender do
 
   describe 'send_account_reset_notice' do
     it 'sends the correct message' do
-      subject.send_account_reset_notice(to: recipient)
+      subject.send_account_reset_notice(to: recipient, country_code: 'US')
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
@@ -21,7 +21,7 @@ describe Telephony::AlertSender do
 
   describe 'send_account_reset_cancellation_notice' do
     it 'sends the correct message' do
-      subject.send_account_reset_cancellation_notice(to: recipient)
+      subject.send_account_reset_cancellation_notice(to: recipient, country_code: 'US')
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
@@ -35,7 +35,7 @@ describe Telephony::AlertSender do
     end
 
     it 'sends the correct message' do
-      subject.send_doc_auth_link(to: recipient, link: link)
+      subject.send_doc_auth_link(to: recipient, link: link, country_code: 'US')
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
@@ -53,7 +53,7 @@ describe Telephony::AlertSender do
         end
 
         it 'puts the URL in the first 160 characters, so it stays within a single SMS message' do
-          subject.send_doc_auth_link(to: recipient, link: link)
+          subject.send_doc_auth_link(to: recipient, link: link, country_code: 'US')
 
           last_message = Telephony::Test::Message.messages.last
           first160 = last_message.body[0...160]
@@ -67,13 +67,13 @@ describe Telephony::AlertSender do
 
       expect(Telephony.config.logger).to receive(:warn)
 
-      subject.send_doc_auth_link(to: recipient, link: long_link)
+      subject.send_doc_auth_link(to: recipient, link: long_link, country_code: 'US')
     end
   end
 
   describe 'send_personal_key_regeneration_notice' do
     it 'sends the correct message' do
-      subject.send_personal_key_regeneration_notice(to: recipient)
+      subject.send_personal_key_regeneration_notice(to: recipient, country_code: 'US')
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
@@ -83,7 +83,7 @@ describe Telephony::AlertSender do
 
   describe 'send_personal_key_sign_in_notice' do
     it 'sends the correct message' do
-      subject.send_personal_key_sign_in_notice(to: recipient)
+      subject.send_personal_key_sign_in_notice(to: recipient, country_code: 'US')
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
@@ -93,7 +93,7 @@ describe Telephony::AlertSender do
 
   describe 'send_join_keyword_response' do
     it 'sends the correct message' do
-      subject.send_join_keyword_response(to: recipient)
+      subject.send_join_keyword_response(to: recipient, country_code: 'US')
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
@@ -103,7 +103,7 @@ describe Telephony::AlertSender do
 
   describe 'send_stop_keyword_response' do
     it 'sends the correct message' do
-      subject.send_stop_keyword_response(to: recipient)
+      subject.send_stop_keyword_response(to: recipient, country_code: 'US')
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
@@ -113,7 +113,7 @@ describe Telephony::AlertSender do
 
   describe 'send_help_keyword_response' do
     it 'sends the correct message' do
-      subject.send_help_keyword_response(to: recipient)
+      subject.send_help_keyword_response(to: recipient, country_code: 'US')
 
       last_message = Telephony::Test::Message.messages.last
       expect(last_message.to).to eq(recipient)
@@ -129,10 +129,11 @@ describe Telephony::AlertSender do
       expect(adapter).to receive(:send).with(
         message: I18n.t('telephony.join_keyword_response'),
         to: recipient,
+        country_code: 'US',
       )
       expect(Telephony::Pinpoint::SmsSender).to receive(:new).and_return(adapter)
 
-      subject.send_join_keyword_response(to: recipient)
+      subject.send_join_keyword_response(to: recipient, country_code: 'US')
     end
   end
 end

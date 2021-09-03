@@ -8,7 +8,7 @@ describe Telephony::Test::VoiceSender do
       call_body = 'This is a test'
       phone = '+1 (202) 555-5000'
 
-      response = subject.send(message: call_body, to: phone)
+      response = subject.send(message: call_body, to: phone, country_code: 'US')
 
       last_call = Telephony::Test::Call.calls.last
 
@@ -20,7 +20,7 @@ describe Telephony::Test::VoiceSender do
     end
 
     it 'simulates a telephony error' do
-      response = subject.send(message: 'test', to: '+1 (225) 555-1000')
+      response = subject.send(message: 'test', to: '+1 (225) 555-1000', country_code: 'US')
 
       last_call = Telephony::Test::Call.calls.last
 
@@ -31,7 +31,7 @@ describe Telephony::Test::VoiceSender do
     end
 
     it 'simulates an invalid calling area error' do
-      response = subject.send(message: 'test', to: '+1 (225) 555-2000')
+      response = subject.send(message: 'test', to: '+1 (225) 555-2000', country_code: 'US')
 
       last_call = Telephony::Test::Call.calls.last
 
