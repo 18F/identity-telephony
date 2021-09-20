@@ -50,7 +50,8 @@ module Telephony
             region: sms_config.region,
             extra: response.extra,
           )
-        rescue Aws::Pinpoint::Errors::TooManyRequestsException, Seahorse::Client::NetworkingError => e
+        rescue Aws::Pinpoint::Errors::InternalServerErrorException, Aws::Pinpoint::Errors::TooManyRequestsException,
+          Seahorse::Client::NetworkingError => e
           finish = Time.now
           response = handle_pinpoint_error(e)
           notify_pinpoint_failover(
