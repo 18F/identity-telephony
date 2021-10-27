@@ -52,6 +52,8 @@ end
 
 WebMock.disable_net_connect!
 
+I18n.available_locales = [:en, :es, :fr]
+
 # Raise missing translation errors in the specs so that missing translations
 # will trigger a test failure
 I18n.exception_handler = lambda do |exception, _locale, _key, _options|

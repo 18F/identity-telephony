@@ -34,4 +34,4 @@ en:
     join_keyword_response: 123456 is your login.gov confirmation code. Use this to confirm your phone number. This code will expire in 5 minutes.
     personal_key_regeneration_notice: A new personal key has been issued for your login.gov account. If this wasn’t you, reset your password.
     personal_key_sign_in_notice: Your personal key was just used to sign into your login.gov account. If this wasn’t you, reset your password.
-    stop_keyword_response: You've unsubscribed from login.gov alerts. You will no longer receive alerts unless you resubscribe by using this phone number to sign in or set up an account. Reply HELP for help or see www.login.gov/help.
+    stop_keyword_response: You have unsubscribed and will not receive alerts from login.gov . To resubscribe, sign in or set up an account. Help? www.login.gov/help
