@@ -34,4 +34,4 @@ es:
     join_keyword_response: 123456 es tu código de confirmación de login.gov. Use esto para confirmar su número de teléfono. Este código caducará en 5 minutos.
     personal_key_regeneration_notice: Se ha emitido una nueva clave personal para tu cuenta login.gov. Si no eres tú, restablece tu contraseña.
     personal_key_sign_in_notice: Su clave personal solo se utilizó para iniciar sesión en su cuenta login.gov. Si no fue así, reinicie su contraseña.
-    stop_keyword_response: Ha cancelado la suscripción a las alertas de login.gov. Ya no recibirá alertas a menos que vuelva a suscribirse utilizando este número de teléfono para iniciar sesión o configurar una cuenta. Responda HELP para obtener ayuda o visite www.login.gov/help.
+    stop_keyword_response: Ha anulado su suscripción y no recibirá alertas de login.gov. Para volver a suscribirse, inicie sesión o cree una cuenta. ¿Necesita ayuda? www.login.gov/help
