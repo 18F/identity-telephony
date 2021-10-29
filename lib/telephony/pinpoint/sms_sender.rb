@@ -143,7 +143,7 @@ module Telephony
             delivery_status: message_response_result.delivery_status,
             message_id: message_response_result.message_id,
             status_code: message_response_result.status_code,
-            status_message: message_response_result.status_message,
+            status_message: message_response_result.status_message.gsub(/\d/, 'x'),
             duration_ms: Util.duration_ms(start: start, finish: finish),
           },
         )

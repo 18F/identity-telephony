@@ -256,6 +256,34 @@ describe Telephony::Pinpoint::SmsSender do
         end
       end
     end
+
+    context 'when the exception message contains a phone number' do
+      let(:phone_numbers) do
+        Aws::Pinpoint::Types::SendMessagesResponse.new(
+          message_response: Aws::Pinpoint::Types::MessageResponse.new(result: { phone: Aws::Pinpoint::Types::MessageResult.new(
+            delivery_status: 'PERMANENT_FAILURE',
+            message_id: 'abc',
+            status_code: 400,
+            status_message: '+1-555-5555 +15555555 (555)-5555',
+            updated_token: '',
+          ) }),
+        )
+      end
+
+      before do
+        mock_build_client
+        mock_build_backup_client
+
+        allow(mock_client).to receive(:send_messages).and_return(phone_numbers)
+        allow(backup_mock_client).to receive(:send_messages).and_return(phone_numbers)
+      end
+
+      it 'does not include the phone number in the results' do
+        response = subject.send(message: 'This is a test!', to: '+1 (123) 456-7890', country_code: 'US')
+        expect(response.extra[:status_message]).to_not match(/\d/)
+        expect(response.extra[:status_message]).to include('+x-xxx-xxxx +xxxxxxxx (xxx)-xxxx')
+      end
+    end
   end
 
   def mock_build_client(client = mock_client)
